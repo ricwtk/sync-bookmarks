@@ -8,6 +8,11 @@ Sync Bookmarks saves the bookmarks locally or remotely in your Google Drive. You
 
 - on the [web app implementation](https://ricwtk.github.io/sync-bookmarks).
 
-<button>Firefox Extension</button>
-<button>Chrome Extension</button>
-<button>Web</button>
+## Firefox Extension
+[Link to Firefox extension page]()
+
+## Chrome Extension
+[Link to Chrome extension page]()
+
+## Web
+[Link to web app]()
