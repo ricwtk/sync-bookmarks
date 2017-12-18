@@ -43,5 +43,14 @@
     
     \end{tikzpicture}
   }
-%  \vspace*{\fill}
+  \newpage
+  \vspace*{\fill}
+  \resizebox{\paperwidth}{!}{
+    \begin{tikzpicture}[line width=20mm,darkcolor]
+    % y range for cloud: 0 -- 8.2
+    \draw[rounded corners=30mm] (0,0) -- ++(0,20.5) -- ++(20,0) -- ++(0,-20.5) -- ++(-9,7) -- cycle; 
+    \pic[scale=0.8] at (13.2,13.5){cloud};
+    
+    \end{tikzpicture}
+  }
 \end{document}
