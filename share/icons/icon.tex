@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[
+  paperheight=10in,
+  paperwidth=10in,
+  margin=0px]{geometry}
+\usepackage{tikz}
+
+\tikzset{
+  cloud/.pic={
+    \coordinate (a) at (0,0);%(13.7,9);
+    \coordinate (b) at ([shift={(-9.1449,-4.8492)}]a);
+
+    \draw[line width=15mm] (a) arc (110:-90:2.5) -- (b) arc (270:70:2) .. controls +(110:6) and +(-110:-5) .. cycle;
+  }
+}
+
+\begin{document}
+  \definecolor{darkcolor}{RGB}{205,220,57} %CDDC39
+  \definecolor{lightcolor}{RGB}{255,255,255}%{237,231,246}%{209,196,233}
+  \centering
+%  %\vspace*{\fill}
+%  \resizebox{\paperwidth}{!}{
+%  \begin{tikzpicture}[line width=5mm,lightcolor]
+%    % y range for cloud: 0 -- 8.2
+%    \draw[darkcolor,fill=darkcolor] (-3,-4.15) rectangle (13.5,12.35);    
+%    \coordinate (a) at (9.1449,4.8492);
+%    \coordinate (b) at (0,0);
+%    \draw (a) arc (110:-90:2.5) -- (b) arc (270:70:2) .. controls +(110:6) and +(-110:-5) .. cycle;
+%    
+%    \draw[] (1.4,0.6) -- ++(7,0) -- ++(0,5.5) -- ++(-7,0) -- ++(0,-5.5) -- cycle;
+%    \draw (1.4,5) -- ++(7,0);
+%    \draw[line width=2mm] (1.8,5.3) -- ++(0,0.4) -- ++(1,0) -- ++(0,-.4);
+%    \draw[line width=2mm] (1.8,5.3)++(1.2,0.4) -- ++(1,0) -- ++(0,-.4);
+%  \end{tikzpicture}
+%  }
+  \vspace*{\fill}
+%  \newpage
+  \resizebox{\paperwidth}{!}{
+    \begin{tikzpicture}[line width=20mm,darkcolor]
+    % y range for cloud: 0 -- 8.2
+    \draw[rounded corners=30mm,fill=darkcolor] (0,0) -- ++(0,20.5) -- ++(20,0) -- ++(0,-20.5) -- ++(-9,7) -- cycle; 
+    \pic[scale=0.8,lightcolor] at (13.2,13.5){cloud};
+    
+    \end{tikzpicture}
+  }
+%  \vspace*{\fill}
+\end{document}
