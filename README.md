@@ -8,4 +8,4 @@ Sync Bookmarks saves the bookmarks locally or remotely in your Google Drive. You
 
 :fa-firefox:
 
-<svg><use xlink:href="share/font-awesome-4.7.0/fonts/fontawesome-webfont.svg"></use></svg>
+<img src="share/font-awesome-4.7.0/fonts/fontawesome-webfont.svg">
