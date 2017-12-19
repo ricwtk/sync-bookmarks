@@ -1,3 +1,6 @@
+var dataPort;
+dataPort = browser.runtime.connect({ name: "popup-background" });
+
 Vue.component("a-mark", {
   props: ["mark", "actions"],
   data: function () {
@@ -13,6 +16,15 @@ Vue.component("a-mark", {
     },
     hidePop: function (el) {
       if (el.target != this.$refs.popupText) this.showPopup = false;
+    },
+    addBookmark: function () {
+      this.$emit("add", {
+        favIconUrl: this.mark.favIconUrl,
+        title: this.mark.title,
+        url: this.mark.url,
+        savedDate: new Date(),
+        category: ""
+      });
     }
   },
   template: `
@@ -26,7 +38,7 @@ Vue.component("a-mark", {
         <div class="mark-title" :title="mark.title" @click="popText">{{ mark.title }}</div>
         <div class="mark-url" :title="mark.url" @click="popText">{{ mark.url }}</div>
         <div class="mark-actions">
-          <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this"></div>
+          <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
           <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks"></div>
           <div v-if="actions.includes('o')" class="mark-action fa fa-external-link-square" title="open link"></div>
           <div v-if="actions.includes('e')" class="mark-action fa fa-pencil-square" title="edit"></div>
@@ -40,7 +52,7 @@ Vue.component("a-mark", {
 Vue.component("sort-by", {
   data: function () {
     return {
-      sortFeatureAll: ["Category", "Title", "URL", "Saved data"],
+      sortFeatureAll: ["Category", "Title", "URL", "Saved date"],
       sortFeature: 0,
       sortOrder: false
     }
@@ -62,25 +74,38 @@ Vue.component("sort-by", {
       console.log(this.sortOrder);
     }
   },
+  methods: {
+    update: function (item) {
+      if (item == "feature") this.sortFeature = (this.sortFeature + 1) % this.sortFeatureAll.length;
+      else this.sortOrder = !this.sortOrder;
+      this.$emit("update", {
+        sortFeature: this.sortFeature,
+        sortOrder: this.sortOrder
+      });
+    }
+  },
   template: `
   <div id="sort-by">
     Sort by:
     <div class="hsep"></div>
-    <div id="sort-feature" @click="sortFeature=(sortFeature+1)%sortFeatureAll.length">{{ sortFeatureDisplay }}</div>
+    <div id="sort-feature" @click="update('feature')">{{ sortFeatureDisplay }}</div>
     <div class="hsep"></div>
-    <div id="sort-order" :class="sortOrderButton" @click="sortOrder=!sortOrder"></div>
+    <div id="sort-order" :class="sortOrderButton" @click="update('order')"></div>
   </div>
   `
 });
 
 Vue.component("content-list", {
-  props: ["sortFeature", "sortOrder"],
-  created: function() {
-    console.log(this.sortFeature, this.sortOrder);
+  props: ["sortFeature", "sortOrder", "fullList"],
+  methods: {
+    clicktest: function() {
+      console.log(this.sortFeature, this.sortOrder, this.fullList);
+    }
   },
   template: `
-  <div>{{ sortFeature }}</div>
-  <div>{{ sortOrder }}</div>
+  <div>
+    <a-mark v-for="x in fullList" :mark="x" actions="-oe"></a-mark>
+  </div>
   `
 });
 
@@ -92,6 +117,13 @@ new Vue({
     currentTab: {},
     bookmarks: []
   },
+  methods: {
+    addBookmark: function (bookmark) {
+      dataPort.postMessage({
+        add: bookmark
+      });
+    }
+  },
   created: function () {
     browser.tabs.query({
       currentWindow: true,
@@ -99,5 +131,12 @@ new Vue({
     }).then(res => {
       this.currentTab = res[0];
     });
+
+    dataPort.onMessage.addListener(m => {
+      console.log("From background.js", JSON.parse(JSON.stringify(m)));
+      if (m.bookmarks) this.bookmarks = m.bookmarks;
+    });
+
+    dataPort.postMessage({});
   }
 })

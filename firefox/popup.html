@@ -4,17 +4,18 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="popup.css">
-    <script src="js/vue.min.js"></script>
+    <script src="js/vue.js"></script>
   </head>
 
   <body>
     <div id="app">
-      <a-mark :mark="currentTab" actions="+-"></a-mark>
+      <a-mark :mark="currentTab" actions="+-" @add="addBookmark"></a-mark>
       <div class="headline"><i class="fa fa-bookmark"></i><div class="hsep"></div>Bookmarks</div>
       <sort-by></sort-by>
       <content-list
         :sort-feature="sortFeature"
-        :sort-order="sortOrder">
+        :sort-order="sortOrder"
+        :full-list="bookmarks">
       </content-list>
     </div>
 

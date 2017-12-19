@@ -13,6 +13,9 @@
     "default_title": "Sync Bookmarks",
     "default_popup": "popup.html"
   },
+  "background":{
+    "scripts": ["background.js"]
+  },
   "permissions": [
     "activeTab"
   ],
