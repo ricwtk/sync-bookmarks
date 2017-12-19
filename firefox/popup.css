@@ -1,0 +1,85 @@
+* {
+  color: #757575;
+}
+
+body {
+  min-width: 200px;
+}
+
+.hsep {
+  min-width: 3px;
+}
+
+.headline {
+  color: #757575;
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#sort-by {
+  color: #757575;
+  background-color: #eee;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+#sort-order, #sort-feature {
+  font-weight: bold;
+  background-color: #ccc;
+  padding: 3px;
+  border-radius: .25em;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.mark-wrapper {
+  margin: 10px;
+  padding: 5px 10px;
+  box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.12);
+}
+.a-mark {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 300px;
+}
+.mark-favicon {
+  margin-right: 5px;
+  object-fit: contain;
+  width: 50px;
+}
+.mark-desc {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.mark-title {
+  font-weight: bold;
+}
+.mark-title, .mark-url {
+  white-space: nowrap;
+  padding: 0px 5px;
+  border-radius: 3px;
+}
+.mark-title:hover, .mark-url:hover {
+  background-color: #eee;
+}
+.mark-actions {
+  display: flex;
+  padding: 5px;
+}
+.mark-action {
+  cursor: pointer;
+  color: #757575;
+  padding: 10px;
+  flex-grow: 1;
+  text-align: center;
+  border-radius: 3px;
+}
+.mark-action:hover {
+  background-color: #eee;
+}
