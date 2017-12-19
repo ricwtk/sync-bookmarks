@@ -1,12 +1,30 @@
 Vue.component("a-mark", {
   props: ["mark", "actions"],
+  data: function () {
+    return {
+      showPopup: false,
+      popupText: ""
+    }
+  },
+  methods: {
+    popText: function (el) {
+      this.showPopup = true;
+      this.popupText = el.target.textContent;
+    },
+    hidePop: function (el) {
+      if (el.target != this.$refs.popupText) this.showPopup = false;
+    }
+  },
   template: `
   <div class="mark-wrapper">
+    <div class="popup-text" v-if="showPopup" @click="hidePop">
+      <div ref="popupText">{{ popupText }}</div>
+    </div>
     <div class="a-mark">
       <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
       <div class="mark-desc">
-        <div class="mark-title" :title="mark.title">{{ mark.title }}</div>
-        <div class="mark-url" :title="mark.url">{{ mark.url }}</div>
+        <div class="mark-title" :title="mark.title" @click="popText">{{ mark.title }}</div>
+        <div class="mark-url" :title="mark.url" @click="popText">{{ mark.url }}</div>
         <div class="mark-actions">
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this"></div>
           <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks"></div>
@@ -71,7 +89,8 @@ new Vue({
   data: {
     sortFeature: "category",
     sortOrder: true,
-    currentTab: {}
+    currentTab: {},
+    bookmarks: []
   },
   created: function () {
     browser.tabs.query({
