@@ -10,16 +10,16 @@ body {
   min-width: 3px;
 }
 
-.headline, .subheadline {
+.headline {
   color: #757575;
   background-color: #ddd;
   display: flex;
-}
-.headline {
   align-items: center;
   justify-content: center;
 }
 .subheadline {
+  display: flex;
+  border-bottom: .5px solid #eee;
   align-items: flex-start;
   padding-left: 3px;
 }

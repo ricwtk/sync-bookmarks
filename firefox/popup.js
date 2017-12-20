@@ -1,6 +1,6 @@
 var dataPort;
 dataPort = browser.runtime.connect({ name: "popup-background" });
-const sortFeatureDefault = 0;
+const sortFeatureDefault = 1;
 const sortOrderDefault = true;
 const sortFeatureAll = ["Category", "Title", "URL", "Saved date"];
 const sortFeatureAllKeys = ["category", "title", "url", "savedDate"];
