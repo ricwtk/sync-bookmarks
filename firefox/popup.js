@@ -176,6 +176,10 @@ Vue.component("content-list", {
   },
   template: `
   <div>
+    <a-mark v-if="rearrangedList.length == 0"
+      :mark="{ favIconUrl: 'icons/icon.png', title: 'Bookmarks are displayed here', url: 'together with their URL'}"
+      actions="">
+    </a-mark>
     <template v-for="section in rearrangedList">
       <div class="subheadline">{{ section.sectionName ? section.sectionName : noSection }}</div>
       <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe" @remove="removeBookmark(x)"></a-mark>
