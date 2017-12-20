@@ -19,7 +19,7 @@ body {
 }
 .subheadline {
   display: flex;
-  border-bottom: .5px solid #eee;
+  border-top: .5px solid #eee;
   align-items: flex-start;
   padding-left: 3px;
 }

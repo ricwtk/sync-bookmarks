@@ -109,7 +109,7 @@ Vue.component("content-list", {
       let sortFeature = sortFeatureAllKeys[this.sortFeature];
       let sections = this.fullList.map(x => {
         if (sortFeature == "category") return x[sortFeature];
-        else if (sortFeature == "title") return x[sortFeature][0].toUpperCase();
+        else if (sortFeature == "title") return x[sortFeature].length > 0 ? x[sortFeature][0].toUpperCase() : "";
         else if (sortFeature == "url") {
           let startAt = x[sortFeature].indexOf("://");
           if (startAt > -1) startAt += 3;
@@ -153,6 +153,11 @@ Vue.component("content-list", {
       console.log(sections);
 
       return sections;
+    },
+    noSection: function () {
+      let sortFeature = sortFeatureAllKeys[this.sortFeature];
+      if (sortFeature == "category") return "Uncategorised";
+      else if (sortFeature == "title") return "No Name";
     }
   },
   methods: {
@@ -163,7 +168,7 @@ Vue.component("content-list", {
   template: `
   <div @click="clicktest">
     <template v-for="section in rearrangedList">
-      <div class="subheadline">{{ section.sectionName }}</div>
+      <div class="subheadline">{{ section.sectionName ? section.sectionName : noSection }}</div>
       <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"></a-mark>
     </template>
   </div>
