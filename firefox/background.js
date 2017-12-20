@@ -1,4 +1,5 @@
-var bookmarks = [{"favIconUrl":"https://www.google.com/images/icons/product/chrome-32.png","title":"chrome.tabs - Google Chrome","url":"https://developer.chrome.com/extensions/tabs#method-query","savedDate":"2017-12-19T14:14:03.693Z","category":""}];
+// var bookmarks = [{"favIconUrl":"https://www.google.com/images/icons/product/chrome-32.png","title":"chrome.tabs - Google Chrome","url":"https://developer.chrome.com/extensions/tabs#method-query","savedDate":"2017-12-19T14:14:03.693Z","category":""}];
+var bookmarks = [];
 var dataPort;
 
 function connected(p) {
@@ -10,7 +11,9 @@ function connected(p) {
       // check if new url is already on the list
       bookmarks.push(m.add);
     }
-    if (m.remove) bookmarks.splice(m.remove, 1);
+    if (m.remove) {
+      bookmarks.splice(bookmarks.findIndex(bm => bm.url == m.remove), 1);
+    }
     dataPort.postMessage({ bookmarks: bookmarks });
   });
 }

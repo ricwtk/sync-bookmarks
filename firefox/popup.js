@@ -29,6 +29,9 @@ Vue.component("a-mark", {
         savedDate: new Date().toISOString(),
         category: ""
       });
+    },
+    removeBookmark: function () {
+      this.$emit("remove", this.mark.url);
     }
   },
   template: `
@@ -43,7 +46,7 @@ Vue.component("a-mark", {
         <div class="mark-url" :title="mark.url" @click="popText">{{ mark.url }}</div>
         <div class="mark-actions">
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
-          <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks"></div>
+          <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks" @click="removeBookmark"></div>
           <div v-if="actions.includes('o')" class="mark-action fa fa-external-link-square" title="open link"></div>
           <div v-if="actions.includes('e')" class="mark-action fa fa-pencil-square" title="edit"></div>
         </div>
@@ -150,8 +153,6 @@ Vue.component("content-list", {
         let result = a.sectionName.localeCompare(b.sectionName);
         return this.sortOrder ? -1*result : result;
       })
-      console.log(sections);
-
       return sections;
     },
     noSection: function () {
@@ -160,13 +161,8 @@ Vue.component("content-list", {
       else if (sortFeature == "title") return "No Name";
     }
   },
-  methods: {
-    clicktest: function () {
-      console.log(this.rearrangedList.map(x => Object.assign({},x))[0]);
-    }
-  },
   template: `
-  <div @click="clicktest">
+  <div>
     <template v-for="section in rearrangedList">
       <div class="subheadline">{{ section.sectionName ? section.sectionName : noSection }}</div>
       <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"></a-mark>
@@ -183,16 +179,26 @@ new Vue({
     currentTab: {},
     bookmarks: []
   },
+  computed: {
+    currentTabAction: function () {
+      if (this.bookmarks.findIndex(bm => bm.url == this.currentTab.url) == -1) return "+";
+      else return "-";
+    }
+  },
   methods: {
     addBookmark: function (bookmark) {
       dataPort.postMessage({
         add: bookmark
       });
     },
+    removeBookmark: function (url) {
+      dataPort.postMessage({
+        remove: url
+      });
+    },
     updateSort: function (sfo) {
       this.sortFeature = sfo.sortFeature;
       this.sortOrder = sfo.sortOrder;
-      console.log(sfo);
     }
   },
   created: function () {
