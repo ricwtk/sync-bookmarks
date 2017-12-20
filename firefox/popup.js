@@ -68,8 +68,10 @@ Vue.component("sort-by", {
     sortOrderButton: function () {
       return {
         fa: true,
-        "fa-angle-double-up": this.sortOrder,
-        "fa-angle-double-down": !this.sortOrder,
+        "fa-sort-alpha-desc": this.sortFeature != 3 && this.sortOrder,
+        "fa-sort-alpha-asc": this.sortFeature != 3 && !this.sortOrder,
+        "fa-sort-numeric-desc": this.sortFeature == 3 && this.sortOrder,
+        "fa-sort-numeric-asc": this.sortFeature == 3 && !this.sortOrder
       }
     }
   },
@@ -113,10 +115,9 @@ Vue.component("content-list", {
           if (startAt > -1) startAt += 3;
           else startAt = 0;
           return x[sortFeature][startAt].toUpperCase();
-        } else if (sortFeature == "savedDate") x[sortFeature].slice(0,10);
+        } else if (sortFeature == "savedDate") return x[sortFeature].slice(0,10);
       });
       sections = sections.filter((s,i,a) => a.indexOf(s) == i);
-
       let newList = this.fullList.map(x => Object.assign({}, x));
       newList.sort((a,b) => {
         let secondarySortFeature = sortFeature == "category" ? "title" : sortFeature;
@@ -162,7 +163,7 @@ Vue.component("content-list", {
   template: `
   <div @click="clicktest">
     <template v-for="section in rearrangedList">
-      <div class="headline">{{ section.sectionName }}</div>
+      <div class="subheadline">{{ section.sectionName }}</div>
       <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"></a-mark>
     </template>
   </div>

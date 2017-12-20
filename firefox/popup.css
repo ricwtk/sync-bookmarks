@@ -10,12 +10,18 @@ body {
   min-width: 3px;
 }
 
-.headline {
+.headline, .subheadline {
   color: #757575;
   background-color: #ddd;
   display: flex;
+}
+.headline {
   align-items: center;
   justify-content: center;
+}
+.subheadline {
+  align-items: flex-start;
+  padding-left: 3px;
 }
 
 #sort-by {
