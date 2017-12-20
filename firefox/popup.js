@@ -1,7 +1,7 @@
 var dataPort;
 dataPort = browser.runtime.connect({ name: "popup-background" });
 const sortFeatureDefault = 1;
-const sortOrderDefault = true;
+const sortOrderDefault = false;
 const sortFeatureAll = ["Category", "Title", "URL", "Saved date"];
 const sortFeatureAllKeys = ["category", "title", "url", "savedDate"];
 
@@ -32,6 +32,14 @@ Vue.component("a-mark", {
     },
     removeBookmark: function () {
       this.$emit("remove", this.mark.url);
+    },
+    openBookmark: function () {
+      try {
+        window.open(this.mark.url, "_blank");
+      } catch (e) {
+        this.showPopup = true;
+        this.popupText = "The following URLs cannot be opened from script due to limitation of webextension: 'chrome: URLs', 'javascript: URLs', 'data: URLs', 'file: URLs'";
+      }
     }
   },
   template: `
@@ -47,7 +55,7 @@ Vue.component("a-mark", {
         <div class="mark-actions">
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
           <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks" @click="removeBookmark"></div>
-          <div v-if="actions.includes('o')" class="mark-action fa fa-external-link-square" title="open link"></div>
+          <div v-if="actions.includes('o')" class="mark-action fa fa-external-link-square" title="open link" @click="openBookmark"></div>
           <div v-if="actions.includes('e')" class="mark-action fa fa-pencil-square" title="edit"></div>
         </div>
       </div>
@@ -161,11 +169,16 @@ Vue.component("content-list", {
       else if (sortFeature == "title") return "No Name";
     }
   },
+  methods: {
+    removeBookmark: function (mark) {
+      this.$emit("remove", mark.url);
+    }
+  },
   template: `
   <div>
     <template v-for="section in rearrangedList">
       <div class="subheadline">{{ section.sectionName ? section.sectionName : noSection }}</div>
-      <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"></a-mark>
+      <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe" @remove="removeBookmark(x)"></a-mark>
     </template>
   </div>
   `
