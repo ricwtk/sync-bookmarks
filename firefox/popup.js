@@ -1,5 +1,9 @@
 var dataPort;
 dataPort = browser.runtime.connect({ name: "popup-background" });
+const sortFeatureDefault = 0;
+const sortOrderDefault = true;
+const sortFeatureAll = ["Category", "Title", "URL", "Saved date"];
+const sortFeatureAllKeys = ["category", "title", "url", "savedDate"];
 
 Vue.component("a-mark", {
   props: ["mark", "actions"],
@@ -22,7 +26,7 @@ Vue.component("a-mark", {
         favIconUrl: this.mark.favIconUrl,
         title: this.mark.title,
         url: this.mark.url,
-        savedDate: new Date(),
+        savedDate: new Date().toISOString(),
         category: ""
       });
     }
@@ -52,9 +56,9 @@ Vue.component("a-mark", {
 Vue.component("sort-by", {
   data: function () {
     return {
-      sortFeatureAll: ["Category", "Title", "URL", "Saved date"],
-      sortFeature: 0,
-      sortOrder: false
+      sortFeatureAll: sortFeatureAll,
+      sortFeature: sortFeatureDefault,
+      sortOrder: sortOrderDefault
     }
   },
   computed: {
@@ -71,13 +75,14 @@ Vue.component("sort-by", {
   },
   watch: {
     sortOrder: function () {
-      console.log(this.sortOrder);
+      this.sendUpdate();
+    },
+    sortFeature: function () {
+      this.sendUpdate();
     }
   },
   methods: {
-    update: function (item) {
-      if (item == "feature") this.sortFeature = (this.sortFeature + 1) % this.sortFeatureAll.length;
-      else this.sortOrder = !this.sortOrder;
+    sendUpdate: function () {
       this.$emit("update", {
         sortFeature: this.sortFeature,
         sortOrder: this.sortOrder
@@ -88,23 +93,78 @@ Vue.component("sort-by", {
   <div id="sort-by">
     Sort by:
     <div class="hsep"></div>
-    <div id="sort-feature" @click="update('feature')">{{ sortFeatureDisplay }}</div>
+    <div id="sort-feature" @click="sortFeature=(sortFeature+1)%sortFeatureAll.length">{{ sortFeatureDisplay }}</div>
     <div class="hsep"></div>
-    <div id="sort-order" :class="sortOrderButton" @click="update('order')"></div>
+    <div id="sort-order" :class="sortOrderButton" @click="sortOrder=!sortOrder"></div>
   </div>
   `
 });
 
 Vue.component("content-list", {
   props: ["sortFeature", "sortOrder", "fullList"],
+  computed: {
+    rearrangedList: function() {
+      let sortFeature = sortFeatureAllKeys[this.sortFeature];
+      let sections = this.fullList.map(x => {
+        if (sortFeature == "category") return x[sortFeature];
+        else if (sortFeature == "title") return x[sortFeature][0].toUpperCase();
+        else if (sortFeature == "url") {
+          let startAt = x[sortFeature].indexOf("://");
+          if (startAt > -1) startAt += 3;
+          else startAt = 0;
+          return x[sortFeature][startAt].toUpperCase();
+        } else if (sortFeature == "savedDate") x[sortFeature].slice(0,10);
+      });
+      sections = sections.filter((s,i,a) => a.indexOf(s) == i);
+
+      let newList = this.fullList.map(x => Object.assign({}, x));
+      newList.sort((a,b) => {
+        let secondarySortFeature = sortFeature == "category" ? "title" : sortFeature;
+        let result = a[secondarySortFeature].localeCompare(b[secondarySortFeature]);
+        return this.sortOrder ? -1*result : result;
+      });
+
+      sections = sections.map(x => {
+        return {
+          sectionName: x,
+          bookmarks: newList.filter(y => {
+            let compareString;
+            if (sortFeature == "category") {
+              compareString = y[sortFeature];
+            } else if (sortFeature == "title") {
+              compareString = y[sortFeature][0].toUpperCase();
+            } else if (sortFeature == "url") {
+              let startAt = y[sortFeature].indexOf("://");
+              if (startAt > -1) startAt += 3;
+              else startAt = 0;
+              compareString = y[sortFeature][startAt].toUpperCase();
+            } else if ("savedDate") {
+              compareString = y[sortFeature].slice(0,10);
+            }
+            return compareString == x;
+          })
+        };
+      });
+      sections.sort((a,b) => {
+        let result = a.sectionName.localeCompare(b.sectionName);
+        return this.sortOrder ? -1*result : result;
+      })
+      console.log(sections);
+
+      return sections;
+    }
+  },
   methods: {
-    clicktest: function() {
-      console.log(this.sortFeature, this.sortOrder, this.fullList);
+    clicktest: function () {
+      console.log(this.rearrangedList.map(x => Object.assign({},x))[0]);
     }
   },
   template: `
-  <div>
-    <a-mark v-for="x in fullList" :mark="x" actions="-oe"></a-mark>
+  <div @click="clicktest">
+    <template v-for="section in rearrangedList">
+      <div class="headline">{{ section.sectionName }}</div>
+      <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"></a-mark>
+    </template>
   </div>
   `
 });
@@ -112,8 +172,8 @@ Vue.component("content-list", {
 new Vue({
   el: "#app",
   data: {
-    sortFeature: "category",
-    sortOrder: true,
+    sortFeature: sortFeatureDefault,
+    sortOrder: sortOrderDefault,
     currentTab: {},
     bookmarks: []
   },
@@ -122,6 +182,11 @@ new Vue({
       dataPort.postMessage({
         add: bookmark
       });
+    },
+    updateSort: function (sfo) {
+      this.sortFeature = sfo.sortFeature;
+      this.sortOrder = sfo.sortOrder;
+      console.log(sfo);
     }
   },
   created: function () {

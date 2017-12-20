@@ -11,7 +11,7 @@
     <div id="app">
       <a-mark :mark="currentTab" actions="+-" @add="addBookmark"></a-mark>
       <div class="headline"><i class="fa fa-bookmark"></i><div class="hsep"></div>Bookmarks</div>
-      <sort-by></sort-by>
+      <sort-by @update="updateSort"></sort-by>
       <content-list
         :sort-feature="sortFeature"
         :sort-order="sortOrder"
