@@ -126,7 +126,7 @@ body {
   display: flex;
   flex-direction: column;
 }
-.cat-display {
+.cat-display, .more-cat-display {
   display: flex;
   flex-wrap: wrap;
   align-items: center;

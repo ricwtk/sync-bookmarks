@@ -48,7 +48,7 @@ Vue.component("a-mark", {
         <div class="mark-url" :title="mark.url" @click="clickText">{{ mark.url }}</div>
         <div class="mark-actions">
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
-          <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks" @click="removeBookmark"></div>
+          <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove bookmark" @click="removeBookmark"></div>
           <div v-if="actions.includes('o')" class="mark-action fa fa-external-link-square" title="open link" @click="openBookmark"></div>
           <div v-if="actions.includes('e')" class="mark-action fa fa-pencil-square" title="edit" @click="editBookmark"></div>
         </div>
@@ -184,7 +184,12 @@ Vue.component("content-list", {
 });
 
 Vue.component("bookmark-edit", {
-  props: ["mark"],
+  props: ["mark", "allCat"],
+  computed: {
+    notCat: function () {
+      return this.allCat.filter(c => !this.mark.categories.includes(c));
+    }
+  },
   methods: {
     hide: function (el) {
       if (el.target == this.$el) this.$emit("hide");
@@ -211,6 +216,9 @@ Vue.component("bookmark-edit", {
       this.$emit("removecat", { url: this.mark.url, removeCat: el.target.dataset.tagname });
       let removeIdx = this.mark.categories.indexOf(el.target.dataset.tagname);
       if (removeIdx > -1) this.mark.categories.splice(removeIdx, 1);
+    },
+    addOldCat: function (el) {
+      this.addCat(el.target.dataset.tagname);
     }
   },
   template: `
@@ -234,6 +242,11 @@ Vue.component("bookmark-edit", {
           </div>
           <div class="cat-input"><i class="fa fa-plus-circle"></i><input type="text" @input="monitorInput" @change="enterCat"></div>
           <div class="more-cat-display">
+            <span v-for="cat in notCat" class="tag">
+              {{ cat }}
+              <span class="tag-sep"></span>
+              <i class="tag-action fa fa-plus" @click="addOldCat" :data-tagname="cat"></i>
+            </span>
           </div>
         </div>
       </div>
@@ -257,6 +270,9 @@ new Vue({
     currentTabAction: function () {
       if (this.bookmarks.findIndex(bm => bm.url == this.currentTab.url) == -1) return "+";
       else return "-";
+    },
+    allCat: function () {
+      return Array.prototype.concat(...this.bookmarks.map(bm => bm.categories)).filter((s,i,a) => a.indexOf(s) == i).sort((a,b) => a.localeCompare(b));
     }
   },
   methods: {
