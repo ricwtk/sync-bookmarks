@@ -111,9 +111,13 @@ body {
 }
 .popup-text > div {
   font-weight: bold;
-  text-align: center;
-  line-height: 1.7em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
+.popup-text .tag { padding-right: 10px!important; }
 .bm-edit {
   flex-grow: 1;
 }
