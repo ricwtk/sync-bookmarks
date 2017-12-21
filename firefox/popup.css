@@ -92,7 +92,7 @@ body {
 }
 .popup-text {
   z-index: 99;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100%;
@@ -103,12 +103,19 @@ body {
   align-items: center;
   overflow: auto;
 }
-.popup-text div {
+.popup-text > div {
   background-color: white;
-  display: flex;
+  /* display: flex; */
   margin: 10px;
   padding: 10px;
   border-radius: 3px;
   font-weight: bold;
   text-align: center;
+  line-height: 1.7em;
+}
+.tag {
+  background-color: #ddd;
+  padding: 0 .8em;
+  border-radius: 1em;
+  white-space: nowrap;
 }

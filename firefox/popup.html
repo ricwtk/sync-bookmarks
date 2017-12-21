@@ -29,7 +29,7 @@
         @error="popText">
       </content-list>
       <div class="popup-text" v-if="showPopup" @click="hidePop">
-        <div ref="popupText">{{ popupText }}</div>
+        <div ref="popupText" v-html="popupText"></div>
       </div>
     </div>
 

@@ -25,7 +25,14 @@ Vue.component("a-mark", {
       try {
         window.open(this.mark.url, "_blank");
       } catch (e) {
-        this.$emit("error", "The following URLs cannot be opened from script due to limitation of webextension: 'chrome: URLs', 'javascript: URLs', 'data: URLs', 'file: URLs'");
+        this.$emit("error",
+          `The following URLs cannot be opened from script due to limitation of
+           webextension:
+           <span class="tag">about: URLs</span>
+           <span class="tag">chrome: URLs</span>
+           <span class="tag">javascript: URLs</span>
+           <span class="tag">data: URLs</span>
+           <span class="tag">file: URLs</span>`);
       }
     }
   },
