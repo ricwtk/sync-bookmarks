@@ -9,7 +9,10 @@
 
   <body>
     <div id="app">
-      <a-mark :mark="currentTab" :actions="currentTabAction" @add="addBookmark" @remove="removeBookmark"></a-mark>
+      <a-mark :mark="currentTab" :actions="currentTabAction"
+        @add="addBookmark"
+        @remove="removeBookmark"
+        @clicktext="popText"></a-mark>
       <div class="headline"><i class="fa fa-bookmark"></i><div class="hsep"></div>Bookmarks</div>
       <sort-by
         :sort-feature="sortFeature"
@@ -21,8 +24,13 @@
         :sort-feature="sortFeature"
         :sort-order="sortOrder"
         :full-list="bookmarks"
-        @remove="removeBookmark">
+        @remove="removeBookmark"
+        @clicktext="popText"
+        @error="popText">
       </content-list>
+      <div class="popup-text" v-if="showPopup" @click="hidePop">
+        <div ref="popupText">{{ popupText }}</div>
+      </div>
     </div>
 
     <script src="popup.js"></script>

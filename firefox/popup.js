@@ -5,19 +5,9 @@ const sortFeatureAllKeys = ["category", "title", "url", "savedDate"];
 
 Vue.component("a-mark", {
   props: ["mark", "actions"],
-  data: function () {
-    return {
-      showPopup: false,
-      popupText: ""
-    }
-  },
   methods: {
-    popText: function (el) {
-      this.showPopup = true;
-      this.popupText = el.target.textContent;
-    },
-    hidePop: function (el) {
-      if (el.target != this.$refs.popupText) this.showPopup = false;
+    clickText: function (el) {
+      this.$emit("clicktext", el.target.textContent);
     },
     addBookmark: function () {
       this.$emit("add", {
@@ -35,21 +25,17 @@ Vue.component("a-mark", {
       try {
         window.open(this.mark.url, "_blank");
       } catch (e) {
-        this.showPopup = true;
-        this.popupText = "The following URLs cannot be opened from script due to limitation of webextension: 'chrome: URLs', 'javascript: URLs', 'data: URLs', 'file: URLs'";
+        this.$emit("error", "The following URLs cannot be opened from script due to limitation of webextension: 'chrome: URLs', 'javascript: URLs', 'data: URLs', 'file: URLs'");
       }
     }
   },
   template: `
   <div class="mark-wrapper">
-    <div class="popup-text" v-if="showPopup" @click="hidePop">
-      <div ref="popupText">{{ popupText }}</div>
-    </div>
     <div class="a-mark">
       <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
       <div class="mark-desc">
-        <div class="mark-title" :title="mark.title" @click="popText">{{ mark.title }}</div>
-        <div class="mark-url" :title="mark.url" @click="popText">{{ mark.url }}</div>
+        <div class="mark-title" :title="mark.title" @click="clickText">{{ mark.title }}</div>
+        <div class="mark-url" :title="mark.url" @click="clickText">{{ mark.url }}</div>
         <div class="mark-actions">
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
           <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks" @click="removeBookmark"></div>
@@ -156,6 +142,12 @@ Vue.component("content-list", {
   methods: {
     removeBookmark: function (mark) {
       this.$emit("remove", mark.url);
+    },
+    clickText: function (text) {
+      this.$emit("clicktext", text);
+    },
+    showError: function (err) {
+      this.$emit("error", err);
     }
   },
   template: `
@@ -166,7 +158,11 @@ Vue.component("content-list", {
     </a-mark>
     <template v-for="section in rearrangedList">
       <div class="subheadline">{{ section.sectionName ? section.sectionName : noSection }}</div>
-      <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe" @remove="removeBookmark(x)"></a-mark>
+      <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"
+        @remove="removeBookmark(x)"
+        @clicktext="clickText"
+        @error="showError">
+      </a-mark>
     </template>
   </div>
   `
@@ -178,7 +174,9 @@ new Vue({
     sortFeature: 0,
     sortOrder: true,
     currentTab: {},
-    bookmarks: []
+    bookmarks: [],
+    showPopup: false,
+    popupText: ""
   },
   computed: {
     currentTabAction: function () {
@@ -204,6 +202,13 @@ new Vue({
     changeSortOrder: function () {
       this.sortOrder = !this.sortOrder;
       dataPort.postMessage({ setSortOrder: this.sortOrder });
+    },
+    popText: function (text) {
+      this.showPopup = true;
+      this.popupText = text;
+    },
+    hidePop: function (el) {
+      if (el.target != this.$refs.popupText) this.showPopup = false;
     }
   },
   created: function () {
