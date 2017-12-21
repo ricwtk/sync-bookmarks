@@ -14,6 +14,11 @@ function connected(p) {
     if (mKeys.includes("remove")) bookmarks.splice(bookmarks.findIndex(bm => bm.url == m.remove), 1);
     if (mKeys.includes("setSortFeature")) sortFeature = m.setSortFeature;
     if (mKeys.includes("setSortOrder")) sortOrder = m.setSortOrder;
+    if (mKeys.includes("addCat")) {
+      let tbm = bookmarks.find(bm => bm.url == m.addCat.url);
+      tbm.categories.push(m.addCat.newCat);
+      tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
+    }
     dataPort.postMessage({
       bookmarks: bookmarks,
       sortFeature: sortFeature,

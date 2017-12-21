@@ -1,7 +1,7 @@
 var dataPort;
 dataPort = browser.runtime.connect({ name: "popup-background" });
-const sortFeatureAll = ["Category", "Title", "URL", "Saved date"];
-const sortFeatureAllKeys = ["category", "title", "url", "savedDate"];
+const sortFeatureAll = ["Categories", "Title", "URL", "Saved date"];
+const sortFeatureAllKeys = ["categories", "title", "url", "savedDate"];
 
 Vue.component("a-mark", {
   props: ["mark", "actions"],
@@ -15,7 +15,7 @@ Vue.component("a-mark", {
         title: this.mark.title,
         url: this.mark.url,
         savedDate: new Date().toISOString(),
-        category: ""
+        categories: []
       });
     },
     removeBookmark: function () {
@@ -34,6 +34,9 @@ Vue.component("a-mark", {
            <span class="tag">data: URLs</span>
            <span class="tag">file: URLs</span>`);
       }
+    },
+    editBookmark: function () {
+      this.$emit("edit", this.mark);
     }
   },
   template: `
@@ -47,7 +50,7 @@ Vue.component("a-mark", {
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
           <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove from bookmarks" @click="removeBookmark"></div>
           <div v-if="actions.includes('o')" class="mark-action fa fa-external-link-square" title="open link" @click="openBookmark"></div>
-          <div v-if="actions.includes('e')" class="mark-action fa fa-pencil-square" title="edit"></div>
+          <div v-if="actions.includes('e')" class="mark-action fa fa-pencil-square" title="edit" @click="editBookmark"></div>
         </div>
       </div>
     </div>
@@ -155,6 +158,9 @@ Vue.component("content-list", {
     },
     showError: function (err) {
       this.$emit("error", err);
+    },
+    clickEdit: function (mark) {
+      this.$emit("edit", mark);
     }
   },
   template: `
@@ -168,12 +174,61 @@ Vue.component("content-list", {
       <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"
         @remove="removeBookmark(x)"
         @clicktext="clickText"
-        @error="showError">
+        @error="showError"
+        @edit="clickEdit">
       </a-mark>
     </template>
   </div>
   `
 });
+
+Vue.component("bookmark-edit", {
+  props: ["mark"],
+  methods: {
+    hide: function (el) {
+      if (el.target == this.$el) this.$emit("hide");
+    },
+    monitorInput: function (el) {
+      let catEntry = el.target.value;
+      if (catEntry[catEntry.length-1] == ",") {
+        let newCat = catEntry.slice(0, catEntry.length-1)
+        this.addCat(newCat);
+        el.target.value = "";
+      }
+    },
+    enterCat: function (el) {
+      let catEntry = el.target.value;
+      this.addCat(catEntry);
+      el.target.value = "";
+    },
+    addCat: function (newCat) {
+      this.$emit("addcat", { url: this.mark.url, newCat: newCat });
+      this.mark.categories.push(newCat);
+      this.mark.categories = this.mark.categories.filter((s,i,a) => a.indexOf(s) == i);
+    }
+  },
+  template: `
+    <div class="bm-edit-wrapper" @click="hide">
+      <div class="bm-edit">
+        <div class="a-mark">
+          <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
+          <div class="mark-desc">
+            <div class="mark-title" :title="mark.title">{{ mark.title }}</div>
+            <div class="mark-url" :title="mark.url">{{ mark.url }}</div>
+          </div>
+        </div>
+        <div class="cat-edit">
+          <div class="cat-display">
+            Categories: <span v-for="cat in mark.categories" class="tag">{{ cat }}</span>
+          </div>
+          <div class="cat-input"><i class="fa fa-plus-circle"></i><input type="text" @input="monitorInput" @change="enterCat"></div>
+          <div class="more-cat-display">
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+})
 
 new Vue({
   el: "#app",
@@ -183,7 +238,9 @@ new Vue({
     currentTab: {},
     bookmarks: [],
     showPopup: false,
-    popupText: ""
+    popupText: "",
+    showEdit: false,
+    bookmarkToEdit: {}
   },
   computed: {
     currentTabAction: function () {
@@ -216,6 +273,15 @@ new Vue({
     },
     hidePop: function (el) {
       if (el.target != this.$refs.popupText) this.showPopup = false;
+    },
+    popEdit: function (mark) {
+      this.showEdit = true;
+      this.bookmarkToEdit = mark;
+    },
+    addCat: function (param) {
+      dataPort.postMessage({
+        addCat: param
+      });
     }
   },
   created: function () {

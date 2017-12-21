@@ -26,11 +26,17 @@
         :full-list="bookmarks"
         @remove="removeBookmark"
         @clicktext="popText"
-        @error="popText">
+        @error="popText"
+        @edit="popEdit">
       </content-list>
       <div class="popup-text" v-if="showPopup" @click="hidePop">
         <div ref="popupText" v-html="popupText"></div>
       </div>
+      <bookmark-edit v-if="showEdit"
+        :mark="bookmarkToEdit"
+        @hide="showEdit=false"
+        @addcat="addCat">
+      </bookmark-edit>
     </div>
 
     <script src="popup.js"></script>

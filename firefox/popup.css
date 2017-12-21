@@ -90,7 +90,7 @@ body {
 .mark-action:hover {
   background-color: #eee;
 }
-.popup-text {
+.popup-text, .bm-edit-wrapper {
   z-index: 99;
   position: fixed;
   left: 0;
@@ -103,15 +103,44 @@ body {
   align-items: center;
   overflow: auto;
 }
-.popup-text > div {
+.popup-text > div, .bm-edit {
   background-color: white;
-  /* display: flex; */
   margin: 10px;
   padding: 10px;
   border-radius: 3px;
+}
+.popup-text > div {
   font-weight: bold;
   text-align: center;
   line-height: 1.7em;
+}
+.bm-edit {
+  flex-grow: 1;
+}
+.bm-edit > .a-mark {
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+.cat-edit {
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+}
+.cat-input {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+}
+.cat-input input {
+  margin-left: 5px;
+  flex-grow: 1;
+  padding: 5px 0;
+  background-color: rgba(0,0,0,0);
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+.cat-input input:focus {
+  border-bottom: 1px solid #CDDC39;
 }
 .tag {
   background-color: #ddd;
