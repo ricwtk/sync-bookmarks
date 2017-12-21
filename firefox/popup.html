@@ -35,7 +35,8 @@
       <bookmark-edit v-if="showEdit"
         :mark="bookmarkToEdit"
         @hide="showEdit=false"
-        @addcat="addCat">
+        @addcat="addCat"
+        @removecat="removeCat">
       </bookmark-edit>
     </div>
 

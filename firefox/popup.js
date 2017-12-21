@@ -205,6 +205,11 @@ Vue.component("bookmark-edit", {
       this.$emit("addcat", { url: this.mark.url, newCat: newCat });
       this.mark.categories.push(newCat);
       this.mark.categories = this.mark.categories.filter((s,i,a) => a.indexOf(s) == i);
+    },
+    removeCat: function (el) {
+      this.$emit("removecat", { url: this.mark.url, removeCat: el.target.dataset.tagname });
+      let removeIdx = this.mark.categories.indexOf(el.target.dataset.tagname);
+      if (removeIdx > -1) this.mark.categories.splice(removeIdx, 1);
     }
   },
   template: `
@@ -219,7 +224,12 @@ Vue.component("bookmark-edit", {
         </div>
         <div class="cat-edit">
           <div class="cat-display">
-            Categories: <span v-for="cat in mark.categories" class="tag">{{ cat }}</span>
+            Categories:
+            <span v-for="cat in mark.categories" class="tag">
+              {{ cat }}
+              <span class="tag-sep"></span>
+              <i class="tag-action fa fa-times" @click="removeCat" :data-tagname="cat"></i>
+            </span>
           </div>
           <div class="cat-input"><i class="fa fa-plus-circle"></i><input type="text" @input="monitorInput" @change="enterCat"></div>
           <div class="more-cat-display">
@@ -281,6 +291,11 @@ new Vue({
     addCat: function (param) {
       dataPort.postMessage({
         addCat: param
+      });
+    },
+    removeCat: function (param) {
+      dataPort.postMessage({
+        removeCat: param
       });
     }
   },

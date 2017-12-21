@@ -19,6 +19,11 @@ function connected(p) {
       tbm.categories.push(m.addCat.newCat);
       tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
     }
+    if (mKeys.includes("removeCat")) {
+      let tbm = bookmarks.find(bm => bm.url == m.removeCat.url);
+      let removeIdx = tbm.categories.indexOf(m.removeCat.removeCat);
+      if (removeIdx > -1) tbm.categories.splice(removeIdx, 1);
+    }
     dataPort.postMessage({
       bookmarks: bookmarks,
       sortFeature: sortFeature,

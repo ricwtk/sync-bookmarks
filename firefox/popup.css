@@ -126,6 +126,11 @@ body {
   display: flex;
   flex-direction: column;
 }
+.cat-display {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
 .cat-input {
   display: flex;
   align-items: center;
@@ -143,8 +148,25 @@ body {
   border-bottom: 1px solid #CDDC39;
 }
 .tag {
-  background-color: #ddd;
-  padding: 0 .8em;
-  border-radius: 1em;
+  background-color: #eee;
+  padding: 0px 5px 0px 10px;
+  height: 28px;
+  border-radius: 14px;
   white-space: nowrap;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+}
+.tag-sep {
+  width: 4px;
+}
+.tag-action {
+  color: #eee;
+  background-color: #ccc;
+  border-radius: 24px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
