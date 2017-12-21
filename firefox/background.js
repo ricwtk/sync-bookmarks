@@ -1,7 +1,7 @@
 // var bookmarks = [{"favIconUrl":"https://www.google.com/images/icons/product/chrome-32.png","title":"chrome.tabs - Google Chrome","url":"https://developer.chrome.com/extensions/tabs#method-query","savedDate":"2017-12-19T14:14:03.693Z","category":""}];
 var bookmarks = [];
 var dataPort;
-var sortFeature = 1;
+var sortFeature = 0;
 var sortOrder = false;
 
 function connected(p) {

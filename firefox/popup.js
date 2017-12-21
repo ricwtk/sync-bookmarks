@@ -99,7 +99,7 @@ Vue.component("content-list", {
     rearrangedList: function() {
       let sortFeature = sortFeatureAllKeys[this.sortFeature];
       let sections = this.fullList.map(x => {
-        if (sortFeature == "category") return x[sortFeature];
+        if (sortFeature == "categories") return x[sortFeature];
         else if (sortFeature == "title") return x[sortFeature].length > 0 ? x[sortFeature][0].toUpperCase() : "";
         else if (sortFeature == "url") {
           let startAt = x[sortFeature].indexOf("://");
@@ -108,10 +108,11 @@ Vue.component("content-list", {
           return x[sortFeature][startAt].toUpperCase();
         } else if (sortFeature == "savedDate") return x[sortFeature].slice(0,10);
       });
+      if (sortFeature == "categories") sections = Array.prototype.concat(...sections, "");
       sections = sections.filter((s,i,a) => a.indexOf(s) == i);
       let newList = this.fullList.map(x => Object.assign({}, x));
       newList.sort((a,b) => {
-        let secondarySortFeature = sortFeature == "category" ? "title" : sortFeature;
+        let secondarySortFeature = sortFeature == "categories" ? "title" : sortFeature;
         let result = a[secondarySortFeature].localeCompare(b[secondarySortFeature]);
         return this.sortOrder ? -1*result : result;
       });
@@ -121,19 +122,19 @@ Vue.component("content-list", {
           sectionName: x,
           bookmarks: newList.filter(y => {
             let compareString;
-            if (sortFeature == "category") {
-              compareString = y[sortFeature];
+            if (sortFeature == "categories") {
+              if (x) return y[sortFeature].includes(x);
+              else return y[sortFeature].length == 0;
             } else if (sortFeature == "title") {
-              compareString = y[sortFeature][0].toUpperCase();
+              return y[sortFeature][0].toUpperCase() == x;
             } else if (sortFeature == "url") {
               let startAt = y[sortFeature].indexOf("://");
               if (startAt > -1) startAt += 3;
               else startAt = 0;
-              compareString = y[sortFeature][startAt].toUpperCase();
+              return y[sortFeature][startAt].toUpperCase() == x;
             } else if ("savedDate") {
-              compareString = y[sortFeature].slice(0,10);
+              return y[sortFeature].slice(0,10) == x;
             }
-            return compareString == x;
           })
         };
       });
@@ -145,7 +146,7 @@ Vue.component("content-list", {
     },
     noSection: function () {
       let sortFeature = sortFeatureAllKeys[this.sortFeature];
-      if (sortFeature == "category") return "Uncategorised";
+      if (sortFeature == "categories") return "Uncategorised";
       else if (sortFeature == "title") return "No Name";
     }
   },
