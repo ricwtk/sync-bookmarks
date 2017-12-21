@@ -11,7 +11,12 @@
     <div id="app">
       <a-mark :mark="currentTab" :actions="currentTabAction" @add="addBookmark" @remove="removeBookmark"></a-mark>
       <div class="headline"><i class="fa fa-bookmark"></i><div class="hsep"></div>Bookmarks</div>
-      <sort-by @update="updateSort"></sort-by>
+      <sort-by
+        :sort-feature="sortFeature"
+        :sort-order="sortOrder"
+        @changesortfeature="changeSortFeature"
+        @changesortorder="changeSortOrder">
+      </sort-by>
       <content-list
         :sort-feature="sortFeature"
         :sort-order="sortOrder"

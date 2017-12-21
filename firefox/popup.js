@@ -1,7 +1,5 @@
 var dataPort;
 dataPort = browser.runtime.connect({ name: "popup-background" });
-const sortFeatureDefault = 1;
-const sortOrderDefault = false;
 const sortFeatureAll = ["Category", "Title", "URL", "Saved date"];
 const sortFeatureAllKeys = ["category", "title", "url", "savedDate"];
 
@@ -65,16 +63,10 @@ Vue.component("a-mark", {
 });
 
 Vue.component("sort-by", {
-  data: function () {
-    return {
-      sortFeatureAll: sortFeatureAll,
-      sortFeature: sortFeatureDefault,
-      sortOrder: sortOrderDefault
-    }
-  },
+  props: ["sortFeature", "sortOrder"],
   computed: {
     sortFeatureDisplay: function() {
-      return this.sortFeatureAll[this.sortFeature];
+      return sortFeatureAll[this.sortFeature];
     },
     sortOrderButton: function () {
       return {
@@ -86,29 +78,21 @@ Vue.component("sort-by", {
       }
     }
   },
-  watch: {
-    sortOrder: function () {
-      this.sendUpdate();
-    },
-    sortFeature: function () {
-      this.sendUpdate();
-    }
-  },
   methods: {
-    sendUpdate: function () {
-      this.$emit("update", {
-        sortFeature: this.sortFeature,
-        sortOrder: this.sortOrder
-      });
+    changeSortFeature: function () {
+      this.$emit("changesortfeature");
+    },
+    changeSortOrder: function () {
+      this.$emit("changesortorder");
     }
   },
   template: `
   <div id="sort-by">
     Sort by:
     <div class="hsep"></div>
-    <div id="sort-feature" @click="sortFeature=(sortFeature+1)%sortFeatureAll.length">{{ sortFeatureDisplay }}</div>
+    <div id="sort-feature" @click="changeSortFeature">{{ sortFeatureDisplay }}</div>
     <div class="hsep"></div>
-    <div id="sort-order" :class="sortOrderButton" @click="sortOrder=!sortOrder"></div>
+    <div id="sort-order" :class="sortOrderButton" @click="changeSortOrder"></div>
   </div>
   `
 });
@@ -177,7 +161,7 @@ Vue.component("content-list", {
   template: `
   <div>
     <a-mark v-if="rearrangedList.length == 0"
-      :mark="{ favIconUrl: 'icons/icon.png', title: 'Bookmarks are displayed here', url: 'together with their URL'}"
+      :mark="{ favIconUrl: 'icons/icon.png', title: 'Bookmarks are displayed here', url: 'together with their URL' }"
       actions="">
     </a-mark>
     <template v-for="section in rearrangedList">
@@ -191,8 +175,8 @@ Vue.component("content-list", {
 new Vue({
   el: "#app",
   data: {
-    sortFeature: sortFeatureDefault,
-    sortOrder: sortOrderDefault,
+    sortFeature: 0,
+    sortOrder: true,
     currentTab: {},
     bookmarks: []
   },
@@ -213,9 +197,13 @@ new Vue({
         remove: url
       });
     },
-    updateSort: function (sfo) {
-      this.sortFeature = sfo.sortFeature;
-      this.sortOrder = sfo.sortOrder;
+    changeSortFeature: function () {
+      this.sortFeature = ( this.sortFeature+1 ) % sortFeatureAll.length;
+      dataPort.postMessage({ setSortFeature: this.sortFeature });
+    },
+    changeSortOrder: function () {
+      this.sortOrder = !this.sortOrder;
+      dataPort.postMessage({ setSortOrder: this.sortOrder });
     }
   },
   created: function () {
@@ -228,7 +216,10 @@ new Vue({
 
     dataPort.onMessage.addListener(m => {
       console.log("From background.js", JSON.parse(JSON.stringify(m)));
-      if (m.bookmarks) this.bookmarks = m.bookmarks;
+      let mKeys = Object.keys(m);
+      if (mKeys.includes("bookmarks")) this.bookmarks = m.bookmarks;
+      if (mKeys.includes("sortFeature")) this.sortFeature = m.sortFeature;
+      if (mKeys.includes("sortOrder")) this.sortOrder = m.sortOrder;
     });
 
     dataPort.postMessage({});
