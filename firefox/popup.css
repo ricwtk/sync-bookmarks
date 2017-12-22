@@ -99,15 +99,14 @@ body {
   height: 100%;
   background-color: rgba(0,0,0,0.5);
   display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: auto;
 }
 .popup-text > div, .bm-edit {
   background-color: white;
-  margin: 10px;
+  margin: 20px;
   padding: 10px;
   border-radius: 3px;
+  overflow: auto;
 }
 .popup-text > div {
   font-weight: bold;
@@ -125,9 +124,14 @@ body {
   padding: 10px 0;
   border-bottom: 1px solid #ddd;
 }
-.cat-edit {
+.title-edit, .cat-edit, .desc-edit {
   padding: 10px 0;
   display: flex;
+}
+.title-edit {
+  align-items: center;
+}
+.cat-edit, .desc-edit {
   flex-direction: column;
 }
 .cat-display, .more-cat-display {
@@ -140,7 +144,7 @@ body {
   align-items: center;
   padding-top: 10px;
 }
-.cat-input input {
+.title-edit input, .cat-input input, .desc-edit textarea {
   margin-left: 5px;
   flex-grow: 1;
   padding: 5px 0;
@@ -148,7 +152,13 @@ body {
   border: 0;
   border-bottom: 1px solid #ddd;
 }
-.cat-input input:focus {
+.title-edit input:focus, .cat-input input:focus {
+  border-bottom: 1px solid #CDDC39;
+}
+.desc-edit textarea {
+  resize: none;
+}
+.desc-edit textarea:focus {
   border-bottom: 1px solid #CDDC39;
 }
 .tag {

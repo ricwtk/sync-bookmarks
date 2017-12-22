@@ -15,7 +15,9 @@ Vue.component("a-mark", {
         title: this.mark.title,
         url: this.mark.url,
         savedDate: new Date().toISOString(),
-        categories: []
+        categories: [],
+        customTitle: "",
+        description: ""
       });
     },
     removeBookmark: function () {
@@ -98,6 +100,7 @@ Vue.component("content-list", {
   computed: {
     rearrangedList: function() {
       let sortFeature = sortFeatureAllKeys[this.sortFeature];
+      if (this.fullList.length == 0) return [];
       let sections = this.fullList.map(x => {
         if (sortFeature == "categories") return x[sortFeature];
         else if (sortFeature == "title") return x[sortFeature].length > 0 ? x[sortFeature][0].toUpperCase() : "";
@@ -231,6 +234,9 @@ Vue.component("bookmark-edit", {
             <div class="mark-url" :title="mark.url">{{ mark.url }}</div>
           </div>
         </div>
+        <div class="title-edit">
+          Title: <input type="text" v-model="mark.customTitle">
+        </div>
         <div class="cat-edit">
           <div class="cat-display">
             Categories:
@@ -248,6 +254,10 @@ Vue.component("bookmark-edit", {
               <i class="tag-action fa fa-plus" @click="addOldCat" :data-tagname="cat"></i>
             </span>
           </div>
+        </div>
+        <div class="desc-edit">
+          Description:
+          <textarea v-model="mark.description" rows="5">
         </div>
       </div>
     </div>
