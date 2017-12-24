@@ -224,6 +224,14 @@ Vue.component("bookmark-edit", {
       this.addCat(el.target.dataset.tagname);
     }
   },
+  watch: {
+    "mark.customTitle": function () {
+      this.$emit("changecustomtitle", { url: this.mark.url, customTitle: this.mark.customTitle });
+    },
+    "mark.description": function () {
+      this.$emit("changedescription", { url: this.mark.url, description: this.mark.description });
+    }
+  },
   template: `
     <div class="bm-edit-wrapper" @click="hide">
       <div class="bm-edit">
@@ -323,6 +331,16 @@ new Vue({
     removeCat: function (param) {
       dataPort.postMessage({
         removeCat: param
+      });
+    },
+    changeCustomTitle: function (param) {
+      dataPort.postMessage({
+        changeCustomTitle: param
+      });
+    },
+    changeDescription: function (param) {
+      dataPort.postMessage({
+        changeDescription: param
       });
     }
   },

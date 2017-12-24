@@ -24,6 +24,14 @@ function connected(p) {
       let removeIdx = tbm.categories.indexOf(m.removeCat.removeCat);
       if (removeIdx > -1) tbm.categories.splice(removeIdx, 1);
     }
+    if (mKeys.includes("changeCustomTitle")) {
+      let tbm = bookmarks.find(bm => bm.url == m.changeCustomTitle.url);
+      tbm.customTitle = m.changeCustomTitle.customTitle;
+    }
+    if (mKeys.includes("changeDescription")) {
+      let tbm = bookmarks.find(bm => bm.url == m.changeDescription.url);
+      tbm.description = m.changeDescription.description;
+    }
     dataPort.postMessage({
       bookmarks: bookmarks,
       sortFeature: sortFeature,
