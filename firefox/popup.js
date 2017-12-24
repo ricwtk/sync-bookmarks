@@ -191,6 +191,19 @@ Vue.component("content-list", {
 
 Vue.component("bookmark-edit", {
   props: ["mark", "allCat"],
+  data: function () {
+    return {
+      altStyle: {}
+    }
+  },
+  mounted: function () {
+    if (this.$el.clientHeight > this.$el.firstChild.clientHeight + 20) {
+      this.altStyle = {
+        "display": "flex",
+        "align-items": "center"
+      };
+    }
+  },
   computed: {
     notCat: function () {
       return this.allCat.filter(c => !this.mark.categories.includes(c));
@@ -236,7 +249,7 @@ Vue.component("bookmark-edit", {
     }
   },
   template: `
-    <div class="bm-edit-wrapper" @click="hide">
+    <div class="bm-edit-wrapper" @click="hide" :style="altStyle">
       <div class="bm-edit">
         <div class="a-mark">
           <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">

@@ -110,6 +110,7 @@ body {
   margin: 20px;
   padding: 10px;
   border-radius: 3px;
+  overflow: auto;
 }
 .popup-text > div {
   font-weight: bold;
