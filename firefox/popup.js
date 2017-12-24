@@ -46,7 +46,7 @@ Vue.component("a-mark", {
     <div class="a-mark">
       <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
       <div class="mark-desc">
-        <div class="mark-title" :title="mark.title" @click="clickText">{{ mark.title }}</div>
+        <div class="mark-title" :title="mark.title" @click="clickText">{{ mark.customTitle ? mark.customTitle : mark.title }}</div>
         <div class="mark-url" :title="mark.url" @click="clickText">{{ mark.url }}</div>
         <div class="mark-actions">
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
@@ -103,8 +103,10 @@ Vue.component("content-list", {
       if (this.fullList.length == 0) return [];
       let sections = this.fullList.map(x => {
         if (sortFeature == "categories") return x[sortFeature];
-        else if (sortFeature == "title") return x[sortFeature].length > 0 ? x[sortFeature][0].toUpperCase() : "";
-        else if (sortFeature == "url") {
+        else if (sortFeature == "title") {
+          let sortRef = x.customTitle ? x.customTitle : x.title;
+          return sortRef.length > 0 ? sortRef[0].toUpperCase() : "";
+        } else if (sortFeature == "url") {
           let startAt = x[sortFeature].indexOf("://");
           if (startAt > -1) startAt += 3;
           else startAt = 0;
@@ -129,7 +131,8 @@ Vue.component("content-list", {
               if (x) return y[sortFeature].includes(x);
               else return y[sortFeature].length == 0;
             } else if (sortFeature == "title") {
-              return y[sortFeature][0].toUpperCase() == x;
+              let sortRef = y.customTitle ? y.customTitle : y.title;
+              return sortRef.length > 0 ? sortRef[0].toUpperCase() == x : "" == x;
             } else if (sortFeature == "url") {
               let startAt = y[sortFeature].indexOf("://");
               if (startAt > -1) startAt += 3;
