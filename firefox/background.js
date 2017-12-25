@@ -3,6 +3,8 @@ var bookmarks = [];
 var dataPort;
 var sortFeature = 0;
 var sortOrder = false;
+var useLocal = true;
+var signedIn = false;
 
 function connected(p) {
   dataPort = p;
@@ -32,12 +34,33 @@ function connected(p) {
       let tbm = bookmarks.find(bm => bm.url == m.changeDescription.url);
       tbm.description = m.changeDescription.description;
     }
-    dataPort.postMessage({
+    let currentData = {
       bookmarks: bookmarks,
       sortFeature: sortFeature,
       sortOrder: sortOrder
-    });
+    };
+    dataPort.postMessage(currentData);
+    browser.storage.local.set({ "sync-bookmarks-data": currentData });
   });
 }
 
 browser.runtime.onConnect.addListener(connected);
+
+browser.storage.local.get("sync-bookmarks-local-prefs").then(res => {
+  let resContent = res["sync-bookmarks-local-prefs"];
+  useLocal = resContent ? resContent["useLocal"] || useLocal : useLocal;
+  console.log("useLocal", useLocal);
+  if (useLocal) {
+    browser.storage.local.get("sync-bookmarks-data").then(res => {
+      let resContent = res["sync-bookmarks-data"];
+      bookmarks = resContent ? resContent["bookmarks"] || bookmarks : bookmarks;
+      sortFeature = resContent ? resContent["sortFeature"] || sortFeature : sortFeature;
+      sortOrder = resContent ? resContent["sortOrder"] || sortOrder : sortOrder;
+      console.log({
+        bookmarks: bookmarks,
+        sortFeature: sortFeature,
+        sortOrder: sortOrder
+      });
+    });
+  }
+});
