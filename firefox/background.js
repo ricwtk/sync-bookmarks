@@ -5,6 +5,7 @@ var sortFeature = 0;
 var sortOrder = false;
 var useLocal = true;
 var signedIn = false;
+var remoteAccount = "";
 
 function connected(p) {
   dataPort = p;
@@ -34,13 +35,21 @@ function connected(p) {
       let tbm = bookmarks.find(bm => bm.url == m.changeDescription.url);
       tbm.description = m.changeDescription.description;
     }
-    let currentData = {
+    dataPort.postMessage({
       bookmarks: bookmarks,
       sortFeature: sortFeature,
-      sortOrder: sortOrder
-    };
-    dataPort.postMessage(currentData);
-    browser.storage.local.set({ "sync-bookmarks-data": currentData });
+      sortOrder: sortOrder,
+      useLocal: useLocal,
+      signedIn: signedIn,
+      remoteAccount: remoteAccount
+    });
+    browser.storage.local.set({
+      "sync-bookmarks-data": {
+        bookmarks: bookmarks,
+        sortFeature: sortFeature,
+        sortOrder: sortOrder
+      }
+    });
   });
 }
 

@@ -199,7 +199,7 @@ Vue.component("bookmark-edit", {
   mounted: function () {
     if (this.$el.clientHeight > this.$el.firstChild.clientHeight + 20) {
       this.altStyle = {
-        "display": "flex",
+        "displaybookmarks": "flex",
         "align-items": "center"
       };
     }
@@ -289,6 +289,33 @@ Vue.component("bookmark-edit", {
       </div>
     </div>
   `
+});
+
+Vue.component("misc-section", {
+  props: ["useLocal", "signedIn", "remoteAccount"],
+  methods: {
+    showHelp: function () {
+      window.open("https://ricwtk.github.io/sync-bookmarks");
+    }
+  },
+  template: `
+  <div class="misc-section">
+    <div class="sign-in-status">
+      <template v-if="useLocal || !signedIn">
+        Saved on local machine
+      </template>
+      <template v-else>
+        Signed in as <b>{{ remoteAccount }}</b>
+      </template>
+    </div>
+    <div class="buttons-section">
+      <div :class="{ fa: true, 'fa-google': useLocal || !signedIn, 'fa-logout': !useLocal && signedIn }"
+        :title="useLocal || !signedIn ? 'Sign in to Google' : 'Save on local machine'">
+      </div>
+      <div class="fa fa-question" @click="showHelp"></div>
+    </div>
+  </div>
+  `
 })
 
 new Vue({
@@ -301,7 +328,10 @@ new Vue({
     showPopup: false,
     popupText: "",
     showEdit: false,
-    bookmarkToEdit: {}
+    bookmarkToEdit: {},
+    useLocal: true,
+    signedIn: false,
+    remoteAccount: ""
   },
   computed: {
     currentTabAction: function () {
@@ -377,6 +407,9 @@ new Vue({
       if (mKeys.includes("bookmarks")) this.bookmarks = m.bookmarks;
       if (mKeys.includes("sortFeature")) this.sortFeature = m.sortFeature;
       if (mKeys.includes("sortOrder")) this.sortOrder = m.sortOrder;
+      if (mKeys.includes("useLocal")) this.useLocal = m.useLocal;
+      if (mKeys.includes("signedIn")) this.signedIn = m.signedIn;
+      if (mKeys.includes("remoteAccount")) this.remoteAccount = m.remoteAccount;
     });
 
     dataPort.postMessage({});

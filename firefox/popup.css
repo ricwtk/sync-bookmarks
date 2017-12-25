@@ -190,3 +190,29 @@ body {
   justify-content: center;
   align-items: center;
 }
+.misc-section {
+  display: flex;
+  flex-direction: column;
+}
+.misc-section .sign-in-status {
+  flex-grow: 1;
+  background-color: #ddd;
+  text-align: center;
+}
+.misc-section .buttons-section {
+  flex-grow: 1;
+  background-color: #eee;
+  display: flex;
+}
+.misc-section .buttons-section * {
+  flex-grow: 1;
+  text-align: center;
+  cursor: pointer;
+  padding: 5px;
+}
+.misc-section .buttons-section *:hover {
+  background-color: #ddd;
+}
+.fa-question {
+  color: red;
+}

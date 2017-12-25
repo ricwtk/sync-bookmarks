@@ -42,6 +42,11 @@
         @changecustomtitle="changeCustomTitle"
         @changedescription="changeDescription">
       </bookmark-edit>
+      <misc-section
+        :use-local="useLocal"
+        :signed-in="signedIn"
+        :remote-account="remoteAccount">
+      </misc-section>
     </div>
 
     <script src="popup.js"></script>
