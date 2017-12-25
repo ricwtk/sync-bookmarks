@@ -213,6 +213,9 @@ Vue.component("bookmark-edit", {
     hide: function (el) {
       if (el.target == this.$el) this.$emit("hide");
     },
+    clickText: function (el) {
+      this.$emit("clicktext", el.target.textContent);
+    },
     monitorInput: function (el) {
       let catEntry = el.target.value;
       if (catEntry[catEntry.length-1] == ",") {
@@ -254,8 +257,8 @@ Vue.component("bookmark-edit", {
         <div class="a-mark">
           <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
           <div class="mark-desc">
-            <div class="mark-title" :title="mark.title">{{ mark.title }}</div>
-            <div class="mark-url" :title="mark.url">{{ mark.url }}</div>
+            <div class="mark-title" :title="mark.title" @click="clickText">{{ mark.title }}</div>
+            <div class="mark-url" :title="mark.url" @click="clickText">{{ mark.url }}</div>
           </div>
         </div>
         <div class="title-edit">

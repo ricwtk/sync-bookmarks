@@ -90,8 +90,10 @@ body {
 .mark-action:hover {
   background-color: #eee;
 }
+.popup-text {
+  z-index: 999;
+}
 .popup-text, .bm-edit-wrapper {
-  z-index: 99;
   position: fixed;
   left: 0;
   top: 0;
