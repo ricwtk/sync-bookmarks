@@ -292,16 +292,19 @@ Vue.component("bookmark-edit", {
 });
 
 Vue.component("misc-section", {
-  props: ["useLocal", "signedIn", "remoteAccount"],
+  props: ["useLocal", "remoteAccount"],
   methods: {
     showHelp: function () {
       window.open("https://ricwtk.github.io/sync-bookmarks");
+    },
+    signInOut: function () {
+      this.$emit("signinout", !this.useLocal);
     }
   },
   template: `
   <div class="misc-section">
     <div class="sign-in-status">
-      <template v-if="useLocal || !signedIn">
+      <template v-if="useLocal">
         Saved on local machine
       </template>
       <template v-else>
@@ -309,8 +312,9 @@ Vue.component("misc-section", {
       </template>
     </div>
     <div class="buttons-section">
-      <div :class="{ fa: true, 'fa-google': useLocal || !signedIn, 'fa-logout': !useLocal && signedIn }"
-        :title="useLocal || !signedIn ? 'Sign in to Google' : 'Save on local machine'">
+      <div :class="{ fa: true, 'fa-google': useLocal, 'fa-sign-out': !useLocal }"
+        :title="useLocal ? 'Sign in to Google' : 'Save on local machine'"
+        @click="signInOut">
       </div>
       <div class="fa fa-home" title="Homepage"
         @click="showHelp"></div>
@@ -331,7 +335,6 @@ new Vue({
     showEdit: false,
     bookmarkToEdit: {},
     useLocal: true,
-    signedIn: false,
     remoteAccount: ""
   },
   computed: {
@@ -392,6 +395,11 @@ new Vue({
       dataPort.postMessage({
         changeDescription: param
       });
+    },
+    signInOut: function (param) {
+      dataPort.postMessage({
+        setLocal: param
+      })
     }
   },
   created: function () {
@@ -409,7 +417,6 @@ new Vue({
       if (mKeys.includes("sortFeature")) this.sortFeature = m.sortFeature;
       if (mKeys.includes("sortOrder")) this.sortOrder = m.sortOrder;
       if (mKeys.includes("useLocal")) this.useLocal = m.useLocal;
-      if (mKeys.includes("signedIn")) this.signedIn = m.signedIn;
       if (mKeys.includes("remoteAccount")) this.remoteAccount = m.remoteAccount;
     });
 
