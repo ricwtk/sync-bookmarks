@@ -312,7 +312,8 @@ Vue.component("misc-section", {
       <div :class="{ fa: true, 'fa-google': useLocal || !signedIn, 'fa-logout': !useLocal && signedIn }"
         :title="useLocal || !signedIn ? 'Sign in to Google' : 'Save on local machine'">
       </div>
-      <div class="fa fa-question" @click="showHelp"></div>
+      <div class="fa fa-home" title="Homepage"
+        @click="showHelp"></div>
     </div>
   </div>
   `

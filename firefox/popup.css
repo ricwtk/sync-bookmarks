@@ -213,6 +213,7 @@ body {
 .misc-section .buttons-section *:hover {
   background-color: #ddd;
 }
-.fa-question {
-  color: red;
+.fa-home:hover {
+  background-color: #CDDC39!important;
+  color: white;
 }
