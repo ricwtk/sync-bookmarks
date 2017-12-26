@@ -153,6 +153,7 @@ function connected(p) {
     console.log("From popup.js", m);
     let retM = {};
     let mKeys = Object.keys(m);
+    if (mKeys.includes("refresh")) return onLocalModified(false);
     if (mKeys.includes("setLocal")) return updateLocal(m.setLocal, true);
     if (mKeys.includes("add")) bookmarks.push(m.add);
     if (mKeys.includes("remove")) bookmarks.splice(bookmarks.findIndex(bm => bm.url == m.remove), 1);

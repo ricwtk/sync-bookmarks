@@ -421,5 +421,6 @@ new Vue({
     });
 
     dataPort.postMessage({});
+    dataPort.postMessage({ refresh: true });
   }
 })
