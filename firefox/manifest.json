@@ -27,7 +27,7 @@
   "content_security_policy": "script-src 'self' https://apis.google.com/ 'unsafe-eval'; object-src 'self';",
   "applications": {
     "gecko": {
-      "id": "sync-saved-windows@ricwtk",
+      "id": "sync-bookmarks@ricwtk",
       "strict_min_version": "42.0"
     }
   }
