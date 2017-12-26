@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:url" content="https://ricwtk.github.io/sync-bookmarks">
+  <meta property="og:title" content="Sync Bookmarks">
+  <meta property="og:description" content="Save bookmarks and sync with Google Drive">
+  <meta name="description" content="Save bookmarks and sync with Google Drive">
+  <meta name="keywords" content="sync bookmarks, synchronise, google drive, bookmarks">
+  <title>Sync Bookmarks</title>
+  <link rel="icon" href="share/icons/icon.png?v=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+  <link rel="stylesheet" href="share/font-awesome-4.7.0/css/font-awesome.min.css">
+  <script src="share/js/vue.min.js"></script>
+  <style>
+  html {
+    width: 100%;
+    height: 100%;
+    font-family: "Roboto Slab", "serif";
+  }
+
+  body {
+    width: 100%;
+    min-height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #wrapper {
+    padding: 30px;
+    width: 80%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 30px;
+    border: 5px dashed #CDDC39;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+  }
+
+  #icon {
+    object-fit: contain;
+    width: 100px;
+    margin: 10px;
+  }
+
+  #description {
+    flex-grow: 1;
+  }
+
+  #title {
+    font-size: 200%;
+    color: #827717;
+  }
+
+  #desc {
+    color: #827717;
+  }
+
+  #links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  #links>* {
+    background-color: #CDDC39;
+    color: #827717;
+    margin: 5px;
+    padding: .5em;
+    border-radius: .5em;
+    border: 2px solid #CDDC39;
+    cursor: pointer;
+    text-align: center;
+    min-width: 200px;
+  }
+
+  #links>*:hover {
+    background-color: #827717;
+    color: #CDDC39;
+  }
+  #links .fa {
+    user-select: none;
+    -moz-user-select: none;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="wrapper">
+    <div class="row">
+      <img id="icon" src="share/icons/icon.png">
+      <div id="description">
+        <div id="title">Sync Saved Windows</div>
+        <div id="desc">
+          This extension save the URL as bookmark. The saved windows can be synchronised with Google account. You can also access and edit the saved windows using the web app. With this extension, you no longer have to keep tab open and you can organise your tabs in different windows. Please use Github for issue tracking and feature suggestions.
+        </div>
+      </div>
+    </div>
+    <div id="links">
+      <div @click="openFirefox"><i class="fa fa-firefox"></i> Firefox extension</div>
+      <div @click="openChrome"><i class="fa fa-chrome"></i> Chrome extension</div>
+      <div @click="openWeb"><i class="fa fa-globe"></i> Web</div>
+      <div @click="openIssueTracker"><i class="fa fa-exclamation-triangle"></i> Issue Tracker</div>
+    </div>
+  </div>
+  <script>
+  new Vue({
+    el: "#wrapper",
+    methods: {
+      openFirefox: () => window.open("https://addons.mozilla.org/en-GB/firefox/addon/sync-bookmarks/"),
+      openChrome: () => window.open("#"),
+      openWeb: () => window.open("web", "_self"),
+      openIssueTracker: () => window.open("https://github.com/ricwtk/sync-bookmarks/issues", "_self")
+    }
+  })
+  </script>
+</body>
+
+</html>
