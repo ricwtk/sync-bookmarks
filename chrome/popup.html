@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="popup.css">
+    <script src="js/vue.min.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <a-mark :mark="currentTab" :actions="currentTabAction"
+        @add="addBookmark"
+        @remove="removeBookmark"
+        @clicktext="popText"></a-mark>
+      <div class="headline"><i class="fa fa-bookmark"></i><div class="hsep"></div>Bookmarks</div>
+      <sort-by
+        :sort-feature="sortFeature"
+        :sort-order="sortOrder"
+        @changesortfeature="changeSortFeature"
+        @changesortorder="changeSortOrder">
+      </sort-by>
+      <content-list
+        :sort-feature="sortFeature"
+        :sort-order="sortOrder"
+        :full-list="bookmarks"
+        @remove="removeBookmark"
+        @clicktext="popText"
+        @error="popText"
+        @edit="popEdit">
+      </content-list>
+      <div class="popup-text" v-if="showPopup" @click="hidePop">
+        <div ref="popupText" v-html="popupText"></div>
+      </div>
+      <bookmark-edit v-if="showEdit"
+        :mark="bookmarkToEdit"
+        :all-cat="allCat"
+        @hide="showEdit=false"
+        @clicktext="popText"
+        @addcat="addCat"
+        @removecat="removeCat"
+        @changecustomtitle="changeCustomTitle"
+        @changedescription="changeDescription">
+      </bookmark-edit>
+      <misc-section
+        :use-local="useLocal"
+        :remote-account="remoteAccount"
+        @signinout="signInOut">
+      </misc-section>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

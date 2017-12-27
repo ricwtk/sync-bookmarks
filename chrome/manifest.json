@@ -1,0 +1,35 @@
+{
+  "manifest_version": 2,
+  "version": "1.0",
+  "name": "Sync Bookmarks",
+  "icons": {
+    "48": "icons/icon.png",
+    "96": "icons/icon.png"
+  },
+  "description": "Synchronise bookmarks",
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": "icons/icon.png",
+    "default_title": "Sync Bookmarks",
+    "default_popup": "popup.html"
+  },
+  "background":{
+    "scripts": ["background.js"]
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "identity",
+    "*://www.googleapis.com/*",
+    "*://accounts.google.com/*",
+    "*://apis.google.com/*"
+  ],
+  "content_security_policy": "script-src 'self' https://apis.google.com/ 'unsafe-eval'; object-src 'self';",
+  "oauth2": {
+    "client_id": "903494531768-84hjq7n2u76kvogs6cesll2nms4eo93h.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.appfolder",
+      "email"
+    ]
+  }
+}
