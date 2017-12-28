@@ -225,29 +225,31 @@ function onLocalModified(interactive) {
   } else {
     chrome.identity.getAuthToken({
       interactive: interactive
-    }).then((res) => {
-      console.log("Logged in to Google");
-      afterGoogleLogin(res)
-        .then(gDriveGetFileId)
-        .then(gDriveGetContent)
-        .then(resp => {
-          console.log(resp);
-          let rKeys = Object.keys(resp);
-          bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
-          sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
-          sortOrder = rKeys.includes("sortOrder") ? resp.sortOrder : false;
-          if (dataPort) dataPort.postMessage({
-            bookmarks: bookmarks,
-            sortFeature: sortFeature,
-            sortOrder: sortOrder,
-            useLocal: useLocal,
-            remoteAccount: remoteAccount
+    }, token => {
+      if (token == undefined) {
+        console.log("Not logged in to Google");
+        updateLocal(true, interactive);
+      } else {
+        console.log("Logged in to Google");
+        afterGoogleLogin(token)
+          .then(gDriveGetFileId)
+          .then(gDriveGetContent)
+          .then(resp => {
+            console.log(resp);
+            let rKeys = Object.keys(resp);
+            bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
+            sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
+            sortOrder = rKeys.includes("sortOrder") ? resp.sortOrder : false;
+            if (dataPort) dataPort.postMessage({
+              bookmarks: bookmarks,
+              sortFeature: sortFeature,
+              sortOrder: sortOrder,
+              useLocal: useLocal,
+              remoteAccount: remoteAccount
+            });
+            return resp;
           });
-          return resp;
-        });
-    }, (res) => {
-      console.log("Not logged in to Google");
-      updateLocal(true, interactive);
+        }
     });
   }
 }

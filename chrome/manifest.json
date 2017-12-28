@@ -25,8 +25,9 @@
     "*://apis.google.com/*"
   ],
   "content_security_policy": "script-src 'self' https://apis.google.com/ 'unsafe-eval'; object-src 'self';",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1/+djozVADCTvF+1s+A9cPa4hYXwrVFQiog9sJXelSL+IqrqUE9D05sB7L86JIc04IABJAcIh3DNS2sLE0vWbC/c1RI1t9p8UcwjOitRxKQrGq06bOigMyYIZ8dziF/GQESXBdKe67mWs8VzzWBImjpgUSqjWiCx81p1DzJv4rcNhgiOiTi2PbOjKc2EWGMFi6wTPhaLPlF4aDvohAsmBjRsHmvslFch2hiFANllZRdcbGFZxa/wJYFhOmnuT0g0ZdumgTOOj1kuHE6s4w50sOTukRyLRlsB/U9z15FexOL2NUjko1+wNtoQqapnQ1jhofB4r10gOGxzDUxDe3CT7QIDAQAB",
   "oauth2": {
-    "client_id": "903494531768-84hjq7n2u76kvogs6cesll2nms4eo93h.apps.googleusercontent.com",
+    "client_id": "903494531768-18mrnp3b725foc9v8rt0bmdd5mqat6e4.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/drive.appfolder",
       "email"
