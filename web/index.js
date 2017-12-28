@@ -15,7 +15,6 @@ function accountStatusListener(signedIn) {
     v_app.signedIn = true;
     v_app.email = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getEmail();
     getFileId().then(getFileContent).then(resp => {
-      console.log(resp);
       let rKeys = Object.keys(resp);
       v_app.bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
       v_app.sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
@@ -113,9 +112,9 @@ Vue.component("single-bookmark", {
           <div class="bm-url" @click="clickText">{{ bookmark.url }}</div>
           <div class="actions-group">
             <div class="fa fa-external-link-square" @click="openBookmark"></div>
-            <div class="fa fa-caret-down" @click="toggleDetails"></div>
           </div>
         </div>
+        <div class="fa fa-caret-down" @click="toggleDetails"></div>
       </div>
       <!--<transition name="details-display">
         <div class="tab-list" v-if="showTabList" ref="tabList">
@@ -231,7 +230,7 @@ v_app = new Vue({
     sortOrder: false,
     signedIn: false,
     email: "",
-    message: "afbdjflnsdjvfkm",
+    message: "",
     messageType: "info"
   },
   methods: {
@@ -256,20 +255,28 @@ v_app = new Vue({
       getFileId().then(updateFileContent);
     },
     refreshFromDatabase: function () {
-      getFileId().then(getFileContent).then(res => {
-        this.savedWindows = res;
+      getFileId().then(getFileContent).then(resp => {
+        let rKeys = Object.keys(resp);
+        v_app.bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
+        v_app.sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
+        v_app.sortOrder = rKeys.includes("sortOrder") ? resp.sortOrder : false;
       });
     },
     showError: function (message) {
-      this.message = message;
-      this.messageType = "error";
+      this.setMessage(message, "error");
     },
     closeMessage: function () {
       this.message = "";
     },
     showText: function (text) {
-      this.message = text;
-      this.messageType = "info";
+      this.setMessage(text, "info");
+    },
+    setMessage: function (message, type) {
+      this.message = message;
+      this.messageType = type;
+      // setTimeout(() => {
+      //   if (this.message == message) this.message = "";
+      // }, 3000);
     }
   }
 })

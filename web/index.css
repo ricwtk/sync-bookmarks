@@ -182,8 +182,17 @@ body {
 .actions-group > *:hover {
   background-color: #eee;
 }
-.actions-group > .fa-caret-down, .actions-group > .fa-caret-up {
-  flex-grow: 0;
+.single-bookmark .fa-caret-down, .single-bookmark .fa-caret-up {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+}
+.single-bookmark .fa-caret-down:hover, .single-bookmark .fa-caret-up:hover {
+  background-color: #eee;
 }
 
 .tab-list {
