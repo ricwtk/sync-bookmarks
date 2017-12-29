@@ -194,54 +194,60 @@ body {
 .single-bookmark .fa-caret-down:hover, .single-bookmark .fa-caret-up:hover {
   background-color: #eee;
 }
-
-.tab-list {
+.details {
+  padding: 10px;
+}
+.details > * {
   display: flex;
+  margin: 10px 0px;
+}
+.details .title-edit {
+  align-items: center;
+}
+.details .desc-edit, .details .cat-edit {
   flex-direction: column;
 }
-.tab-display-enter-active, .tab-display-leave-active {
-  transition: all .5s;
-}
-.tab-display-enter, .tab-display-leave-to {
-  transform: translateY(-50%);
-  opacity: 0;
-}
-.single-tab-detail {
-  display: flex;
-  align-items: stretch;
-  color: #757575;
-}
-.single-tab-detail .favicon {
-  margin-left: 10px;
-}
-.single-tab-detail .description {
-  flex-grow: 1;
+.cat-input {
   display: flex;
   align-items: center;
-  overflow: hidden;
 }
-.description .detail {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  overflow-x: scroll;
-  margin: 10px 10px;
-}
-.single-tab-title {
-  white-space: nowrap;
-}
-.single-tab-url {
-  white-space: nowrap;
-  font-size: 90%;
+.tag {
+  display: inline-flex;
+  align-items: center;
   background-color: #eee;
-  padding: 2px 12px;
+  padding: 3px 5px 3px 8px;
   border-radius: 1em;
+  margin: 2px;
 }
-.action.fa-minus { background-color: #FFC107; }
-.action.fa-minus:hover { background-color: #FFD54F; }
-.action.fa-external-link { background-color: #4caf50; }
-.action.fa-external-link:hover { background-color: #81C784; }
+.tag .fa {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: #bbb;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+textarea, input[type="text"] {
+  padding: 5px 0;
+  background-color: rgba(0,0,0,0);
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+textarea:focus, input[type="text"]:focus {
+  border-bottom: 1px solid #CDDC39;
+}
+textarea {
+  resize: none;
+}
+.details .title-edit input, .cat-input input {
+  flex-grow: 1;
+  margin-left: 5px;
+}
 
 #global-actions {
   position: fixed;

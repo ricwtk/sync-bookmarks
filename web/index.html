@@ -59,9 +59,11 @@
     </div>
     <single-bookmark v-for="bm in bookmarks"
       :bookmark="bm"
+      :all-categories="allCategories"
       @clicktext="showText"
-      @error="showError">
-    </single-window>
+      @error="showError"
+      @addcat="addCat">
+    </single-bookmark>
     </div>
     <global-actions
       @refresh="refreshFromDatabase">
