@@ -312,3 +312,29 @@ textarea {
 .error-message > .close-message {
   background-color: #E57373;
 }
+.ss-wrapper {
+  z-index: 99;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ss {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+.ss-title {
+  border-bottom: 1px dashed;
+  align-self: center;
+}
+.ss-sort {
+  
+}

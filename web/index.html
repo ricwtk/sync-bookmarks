@@ -66,13 +66,21 @@
     </single-bookmark>
     </div>
     <global-actions
-      @refresh="refreshFromDatabase">
+      @refresh="refreshFromDatabase"
+      @showsettings="showSettings">
     </global-actions>
     <message v-if="message"
       :message="message"
       :type="messageType"
       @close="closeMessage">
     </message>
+    <setting-screen v-if="showSettingsScreen"
+      :sort-by="sortFeature"
+      :sort-order="sortOrder"
+      @changesortby="changeSortFeature"
+      @changesortorder="changeSortOrder"
+      @hide="showSettingsScreen = false">
+    </setting-screen>
   </div>
   <script src="https://apis.google.com/js/api:platform.js?onload=checkSignInStatus" async defer></script>
   <script src="index.js"></script>

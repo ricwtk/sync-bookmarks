@@ -82,7 +82,7 @@ Vue.component("single-bookmark", {
   props: ["bookmark", "allCategories"],
   data: function () {
     return {
-      showDetails: true
+      showDetails: false
     }
   },
   computed: {
@@ -172,42 +172,6 @@ Vue.component("single-bookmark", {
   `
 });
 
-Vue.component("single-tab", {
-  props: ["tab"],
-  template: `
-    <img v-if="tab.favIconUrl" :src="tab.favIconUrl" class="favicon" :title="tab.title">
-    <i v-else class="fa fa-question-circle favicon"></i>
-  `
-});
-
-Vue.component("single-tab-detail", {
-  props: ["tab"],
-  methods: {
-    openTab: function () {
-      window.open(this.tab.url);
-    },
-    removeTab: function () {
-      this.$emit("removetab");
-    }
-  },
-  template: `
-    <div class="single-tab-detail">
-      <div class="description">
-        <img v-if="tab.favIconUrl" :src="tab.favIconUrl" class="favicon">
-        <i v-else class="fa fa-question-circle favicon"></i>
-        <div class="detail">
-          <div class="single-tab-title">{{ tab.title }}</div>
-          <div class="single-tab-url">{{ tab.url }}</div>
-        </div>
-      </div>
-      <div class="actions-group">
-        <div class="action fa fa-minus" @click="removeTab"></div>
-        <div class="action fa fa-external-link" @click="openTab"></div>
-      </div>
-    </div>
-  `
-});
-
 Vue.component("global-actions", {
   data: function () {
     return {
@@ -230,12 +194,16 @@ Vue.component("global-actions", {
     },
     goHome: function () {
       window.open("../", "_self");
+    },
+    openSettings: function () {
+      this.$emit("showsettings");
     }
   },
   template: `
     <div id="global-actions">
       <template v-if="showMenu">
         <div class="g-action-button fa fa-times" @click="closeMenu"></div>
+        <div class="g-action-button fa fa-cog" @click="openSettings"></div>
         <div class="g-action-button fa fa-refresh" @click="refresh"></div>
         <div class="g-action-button fa fa-home" @click="goHome"></div>
       </template>
@@ -267,7 +235,54 @@ Vue.component("message", {
     </div>
   </div>
   `
-})
+});
+
+Vue.component("setting-screen", {
+  props: ["sortBy", "sortOrder"],
+  data: function () {
+    return {
+      sortFeatureAll: ["Categories", "Title", "URL", "Saved date"],
+      sortFeatureAllKeys: ["categories", "title", "url", "savedDate"]
+    }
+  },
+  computed: {
+    sortFeatureDisplay: function() {
+      return this.sortFeatureAll[this.sortBy];
+    },
+    sortOrderClass: function () {
+      return {
+        "ss-sort-order": true,
+        fa: true,
+        "fa-sort-alpha-desc": this.sortBy != 3 && this.sortOrder,
+        "fa-sort-alpha-asc": this.sortBy != 3 && !this.sortOrder,
+        "fa-sort-numeric-desc": this.sortBy == 3 && this.sortOrder,
+        "fa-sort-numeric-asc": this.sortBy == 3 && !this.sortOrder
+      }
+    }
+  },
+  methods: {
+    hide: function (el) {
+      if (el.target == this.$el) this.$emit("hide");
+    },
+    changeSortBy: function () {
+      this.$emit("changesortby", ( this.sortBy+1 ) % this.sortFeatureAll.length);
+    },
+    changeSortOrder: function () {
+      this.$emit("changesortorder", !this.sortOrder);
+    }
+  },
+  template: `
+    <div class="ss-wrapper" @click="hide">
+      <div class="ss">
+        <div class="ss-title">Settings</div>
+        <div class="ss-sort">
+          <div class="ss-sort-by" @click="changeSortBy">{{ sortFeatureDisplay }}</div>
+          <div :class="sortOrderClass" @click="changeSortOrder"></div>
+        </div>
+      </div>
+    </div>
+  `
+});
 
 v_app = new Vue({
   el: "#wrapper",
@@ -278,7 +293,8 @@ v_app = new Vue({
     signedIn: false,
     email: "",
     message: "",
-    messageType: "info"
+    messageType: "info",
+    showSettingsScreen: true
   },
   computed: {
     allCategories: function () {
@@ -334,6 +350,17 @@ v_app = new Vue({
       let tbm = this.bookmarks.find(bm => bm.url == m.url);
       tbm.categories.push(m.newCat);
       tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
+      getFileId().then(updateFileContent);
+    },
+    showSettings: function () {
+      this.showSettingsScreen = true;
+    },
+    changeSortFeature: function (sortFeature) {
+      this.sortFeature = sortFeature;
+      getFileId().then(updateFileContent);
+    },
+    changeSortOrder: function (sortOrder) {
+      this.sortOrder = sortOrder;
       getFileId().then(updateFileContent);
     }
   }
