@@ -65,20 +65,13 @@
       </div>
       <div><i class="fa fa-bars"></i> <i class="fa fa-caret-right"></i> <i class="fa fa-home"></i></div>
     </div>
-    <single-section
-      :section="{ name: 'testCat' }"
-      :info="{ allCategories: [] }"
+    <single-section v-for="section in rearrangedList"
+      :section="section"
+      :info="{ allCategories: allCategories }"
       @clicktext="showText"
       @error="showError"
       @addCat="addCat">
     </single-section>
-    <single-bookmark v-for="bm in bookmarks"
-      :bookmark="bm"
-      :all-categories="allCategories"
-      @clicktext="showText"
-      @error="showError"
-      @addcat="addCat">
-    </single-bookmark>
     </div>
     <global-actions
       @refresh="refreshFromDatabase">

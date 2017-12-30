@@ -319,11 +319,67 @@ v_app = new Vue({
     signedIn: false,
     email: "",
     message: "",
-    messageType: "info"
+    messageType: "info",
+    sortFeatureAllKeys: ["categories", "title", "url", "savedDate"]
   },
   computed: {
     allCategories: function () {
       return Array.prototype.concat(...this.bookmarks.map(bm => bm.categories)).filter((s,i,a) => a.indexOf(s) == i).sort((a,b) => a.localeCompare(b));
+    },
+    rearrangedList: function () {
+      let sortFeature = this.sortFeatureAllKeys[this.sortFeature];
+      if (this.bookmarks.length == 0) return [];
+      let sections = this.bookmarks.map(x => {
+        if (sortFeature == "categories") return x[sortFeature];
+        else if (sortFeature == "title") {
+          let sortRef = x.customTitle ? x.customTitle : x.title;
+          return sortRef.length > 0 ? sortRef[0].toUpperCase() : "";
+        } else if (sortFeature == "url") {
+          let startAt = x[sortFeature].indexOf("://");
+          if (startAt > -1) startAt += 3;
+          else startAt = 0;
+          return x[sortFeature][startAt].toUpperCase();
+        } else if (sortFeature == "savedDate") return x[sortFeature].slice(0,10);
+      });
+      if (sortFeature == "categories") sections = Array.prototype.concat(...sections, "");
+      sections = sections.filter((s,i,a) => a.indexOf(s) == i);
+      let newList = this.bookmarks.map(x => Object.assign({}, x));
+      newList.sort((a,b) => {
+        let secondarySortFeature = sortFeature == "categories" ? "title" : sortFeature;
+        let result = a[secondarySortFeature].localeCompare(b[secondarySortFeature]);
+        return this.sortOrder ? -1*result : result;
+      });
+
+      sections = sections.map(x => {
+        return {
+          name: x,
+          bookmarks: newList.filter(y => {
+            let compareString;
+            if (sortFeature == "categories") {
+              if (x) return y[sortFeature].includes(x);
+              else return y[sortFeature].length == 0;
+            } else if (sortFeature == "title") {
+              let sortRef = y.customTitle ? y.customTitle : y.title;
+              return sortRef.length > 0 ? sortRef[0].toUpperCase() == x : "" == x;
+            } else if (sortFeature == "url") {
+              let startAt = y[sortFeature].indexOf("://");
+              if (startAt > -1) startAt += 3;
+              else startAt = 0;
+              return y[sortFeature][startAt].toUpperCase() == x;
+            } else if ("savedDate") {
+              return y[sortFeature].slice(0,10) == x;
+            }
+          })
+        };
+      });
+      sections.sort((a,b) => {
+        let result = a.name.localeCompare(b.name);
+        return this.sortOrder ? -1*result : result;
+      })
+      return sections.map(s => {
+        if (!s.name) s.name = sortFeature == "categories" ? "Uncategorised" : sortFeature == "title" ? "No Name" : "";
+        return s;
+      });
     }
   },
   methods: {
