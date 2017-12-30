@@ -328,3 +328,9 @@ textarea {
 .ds > *:hover {
   background-color: #eee;
 }
+.sc {
+  border-top: 1px solid #ddd;
+  color: #757575;
+  align-self: stretch;
+  margin: 10px 20px 0px 20px;
+}

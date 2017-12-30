@@ -65,6 +65,13 @@
       </div>
       <div><i class="fa fa-bars"></i> <i class="fa fa-caret-right"></i> <i class="fa fa-home"></i></div>
     </div>
+    <single-section
+      :section="{ name: 'testCat' }"
+      :info="{ allCategories: [] }"
+      @clicktext="showText"
+      @error="showError"
+      @addCat="addCat">
+    </single-section>
     <single-bookmark v-for="bm in bookmarks"
       :bookmark="bm"
       :all-categories="allCategories"

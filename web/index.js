@@ -172,6 +172,35 @@ Vue.component("single-bookmark", {
   `
 });
 
+Vue.component("single-section", {
+  props: ["section", "info"],
+  methods: {
+    clickText: function (param) {
+      this.$emit("clicktext", param);
+    },
+    showError: function (param) {
+      this.$emit("error", param);
+    },
+    addCat: function (param) {
+      this.$emit("addcat", param);
+    }
+  },
+  template: `
+  <div class="sc">
+    <div class="sc-title">{{ section.name }}</div>
+    <div class="sc-content">
+      <single-bookmark v-for="bm in section.bookmarks"
+        :bookmark="bm"
+        :all-categories="info.allCategories"
+        @clicktext="clickText"
+        @error="showError"
+        @addcat="addCat">
+      </single-bookmark>
+    </div>
+  </div>
+  `
+});
+
 Vue.component("global-actions", {
   data: function () {
     return {
