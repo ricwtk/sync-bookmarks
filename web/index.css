@@ -4,6 +4,13 @@
   margin: 0px;
 }
 
+::selection {
+  background: rgba(205,220,57,.5);
+}
+::-moz-selection {
+  background: rgba(205,220,57,.5);
+}
+
 html {
   /* background-color: #E8EAF6; */
   width: 100%;
