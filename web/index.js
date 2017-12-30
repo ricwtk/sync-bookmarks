@@ -194,16 +194,12 @@ Vue.component("global-actions", {
     },
     goHome: function () {
       window.open("../", "_self");
-    },
-    openSettings: function () {
-      this.$emit("showsettings");
     }
   },
   template: `
     <div id="global-actions">
       <template v-if="showMenu">
         <div class="g-action-button fa fa-times" @click="closeMenu"></div>
-        <div class="g-action-button fa fa-cog" @click="openSettings"></div>
         <div class="g-action-button fa fa-refresh" @click="refresh"></div>
         <div class="g-action-button fa fa-home" @click="goHome"></div>
       </template>
@@ -237,50 +233,50 @@ Vue.component("message", {
   `
 });
 
-Vue.component("setting-screen", {
-  props: ["sortBy", "sortOrder"],
+Vue.component("display-settings", {
+  props: ["sortFeature", "sortOrder", "arrangement"],
   data: function () {
     return {
       sortFeatureAll: ["Categories", "Title", "URL", "Saved date"],
-      sortFeatureAllKeys: ["categories", "title", "url", "savedDate"]
     }
   },
   computed: {
-    sortFeatureDisplay: function() {
-      return this.sortFeatureAll[this.sortBy];
-    },
-    sortOrderClass: function () {
+    sortOrderIcon: function () {
       return {
-        "ss-sort-order": true,
         fa: true,
-        "fa-sort-alpha-desc": this.sortBy != 3 && this.sortOrder,
-        "fa-sort-alpha-asc": this.sortBy != 3 && !this.sortOrder,
-        "fa-sort-numeric-desc": this.sortBy == 3 && this.sortOrder,
-        "fa-sort-numeric-asc": this.sortBy == 3 && !this.sortOrder
+        "fa-sort-alpha-desc": this.sortFeature != 3 && this.sortOrder,
+        "fa-sort-alpha-asc": this.sortFeature != 3 && !this.sortOrder,
+        "fa-sort-numeric-desc": this.sortFeature == 3 && this.sortOrder,
+        "fa-sort-numeric-asc": this.sortFeature == 3 && !this.sortOrder
+      }
+    },
+    arrangeIcon: function () {
+      return {
+        fa: true,
+        "fa-th": this.arrangement,
+        "fa-th-list": !this.arrangement
       }
     }
   },
   methods: {
-    hide: function (el) {
-      if (el.target == this.$el) this.$emit("hide");
-    },
-    changeSortBy: function () {
-      this.$emit("changesortby", ( this.sortBy+1 ) % this.sortFeatureAll.length);
-    },
     changeSortOrder: function () {
       this.$emit("changesortorder", !this.sortOrder);
+    },
+    changeSortFeature: function () {
+      this.$emit("changesortfeature", ( this.sortFeature+1 ) % this.sortFeatureAll.length)
+    },
+    changeArrangement: function () {
+      this.$emit("changearrangement", !this.arrangement);
     }
   },
   template: `
-    <div class="ss-wrapper" @click="hide">
-      <div class="ss">
-        <div class="ss-title">Settings</div>
-        <div class="ss-sort">
-          <div class="ss-sort-by" @click="changeSortBy">{{ sortFeatureDisplay }}</div>
-          <div :class="sortOrderClass" @click="changeSortOrder"></div>
-        </div>
-      </div>
+  <div class="ds-wrapper">
+    <div class="ds">
+      <div :class="sortOrderIcon" @click="changeSortOrder"></div>
+      <div @click="changeSortFeature">{{ sortFeatureAll[sortFeature] }}</div>
+      <div :class="arrangeIcon" @click="changeArrangement"></div>
     </div>
+  </div>
   `
 });
 
@@ -290,11 +286,11 @@ v_app = new Vue({
     bookmarks: [],
     sortFeature: 0,
     sortOrder: false,
+    arrangement: false,
     signedIn: false,
     email: "",
     message: "",
-    messageType: "info",
-    showSettingsScreen: true
+    messageType: "info"
   },
   computed: {
     allCategories: function () {
@@ -352,16 +348,14 @@ v_app = new Vue({
       tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
       getFileId().then(updateFileContent);
     },
-    showSettings: function () {
-      this.showSettingsScreen = true;
-    },
     changeSortFeature: function (sortFeature) {
       this.sortFeature = sortFeature;
-      getFileId().then(updateFileContent);
     },
     changeSortOrder: function (sortOrder) {
       this.sortOrder = sortOrder;
-      getFileId().then(updateFileContent);
+    },
+    changeArrangement: function (arrangement) {
+      this.arrangement = arrangement;
     }
   }
 })

@@ -51,6 +51,14 @@
         </span>
       </div>
     </div>
+    <display-settings
+      :sort-feature="sortFeature"
+      :sort-order="sortOrder"
+      :arrangement="arrangement"
+      @changesortfeature="changeSortFeature"
+      @changesortorder="changeSortOrder"
+      @changearrangement="changeArrangement">
+    </display-settings>
     <div id="no-bookmark-message">
       <div>
         Bookmarks saved with <i class="fa fa-firefox"></i> or <i class="fa fa-chrome"></i> extension will be displayed here
@@ -66,21 +74,13 @@
     </single-bookmark>
     </div>
     <global-actions
-      @refresh="refreshFromDatabase"
-      @showsettings="showSettings">
+      @refresh="refreshFromDatabase">
     </global-actions>
     <message v-if="message"
       :message="message"
       :type="messageType"
       @close="closeMessage">
     </message>
-    <setting-screen v-if="showSettingsScreen"
-      :sort-by="sortFeature"
-      :sort-order="sortOrder"
-      @changesortby="changeSortFeature"
-      @changesortorder="changeSortOrder"
-      @hide="showSettingsScreen = false">
-    </setting-screen>
   </div>
   <script src="https://apis.google.com/js/api:platform.js?onload=checkSignInStatus" async defer></script>
   <script src="index.js"></script>
