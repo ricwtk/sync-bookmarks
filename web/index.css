@@ -72,9 +72,17 @@ body {
 }
 .card-box > div {
   margin: 0px 5px 10px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.25);
+  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
 }
 .card-box.arrange-grid {
   width: 250px!important;
+}
+.card-box > div:hover {
+  box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.25);
+  /* box-shadow: 0px 0px 3px 3px rgba(205,220,57,.5); */
 }
 #sign-in-button {
   height: 50px;
@@ -84,11 +92,11 @@ body {
 .buttonContentWrapper {
   width: 100%;
   display: flex;
-  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25);
+  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
   cursor: pointer;
 }
 .buttonContentWrapper:hover {
-  box-shadow: 0px 0px 3px 3px rgba(205,220,57,.5);
+  /* box-shadow: 0px 0px 3px 3px rgba(205,220,57,.5); */
 }
 .buttonContentWrapper .buttonIcon {
   padding: 15px;
@@ -110,7 +118,7 @@ body {
 
 #no-bookmark-message, .single-bookmark, .ds-wrapper {
   color: #757575;
-  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25);
+  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
   display: flex;
 }
 
@@ -138,12 +146,12 @@ body {
   align-items: stretch;
 }
 .overview:hover {
-  box-shadow: 0px 0px 3px 3px rgba(205,220,57,.5);
+  /* box-shadow: 0px 0px 3px 3px rgba(205,220,57,.5); */
 }
 .overview {
   display: flex;
   flex-direction: row;
-  box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25);
+  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
   padding: 20px;
   align-items: center;
 }
