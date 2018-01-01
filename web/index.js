@@ -305,12 +305,10 @@ Vue.component("display-settings", {
   },
   template: `
   <div class="card-box">
-    <div class="ds-wrapper">
-      <div class="ds">
-        <div :class="sortOrderIcon" @click="changeSortOrder"></div>
-        <div @click="changeSortFeature">{{ sortFeatureAll[sortFeature] }}</div>
-        <div :class="arrangeIcon" @click="changeArrangement"></div>
-      </div>
+    <div class="ds">
+      <div :class="sortOrderIcon" @click="changeSortOrder"></div>
+      <div @click="changeSortFeature">{{ sortFeatureAll[sortFeature] }}</div>
+      <div :class="arrangeIcon" @click="changeArrangement"></div>
     </div>
   </div>
   `

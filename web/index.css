@@ -75,51 +75,37 @@ body {
   border-radius: 3px;
   border: 1px solid #ddd;
   box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.25);
-  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
+  color: #757575;
+  display: flex;
 }
 .card-box.arrange-grid {
   width: 250px!important;
 }
 .card-box > div:hover {
   box-shadow: 0px 4px 5px 0px rgba(0,0,0,0.25);
-  /* box-shadow: 0px 0px 3px 3px rgba(205,220,57,.5); */
 }
 #sign-in-button {
   height: 50px;
   display: flex;
   flex-direction: row;
-}
-.buttonContentWrapper {
-  width: 100%;
-  display: flex;
-  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
   cursor: pointer;
 }
-.buttonContentWrapper:hover {
-  /* box-shadow: 0px 0px 3px 3px rgba(205,220,57,.5); */
-}
-.buttonContentWrapper .buttonIcon {
+#sign-in-button .buttonIcon {
   padding: 15px;
 }
-.buttonContentWrapper .svgButtonIcon {
+#sign-in-button .svgButtonIcon {
   width: 18px;
   height: 18px;
 }
-.buttonContentWrapper .buttonContents {
+#sign-in-button .buttonContents {
   color: #757575;
   flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.buttonContentWrapper .buttonContents > * {
+#sign-in-button .buttonContents > * {
   text-align: center;
-}
-
-#no-bookmark-message, .single-bookmark, .ds-wrapper {
-  color: #757575;
-  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
-  display: flex;
 }
 
 #no-bookmark-message {
@@ -330,17 +316,18 @@ textarea {
   background-color: #E57373;
 }
 .ds {
-  margin: 10px;
+  padding: 10px;
   flex-grow: 1;
   display: flex;
   justify-content: space-around;
-  align-items: center;
+  align-items: stretch;
 }
 .ds * {
   flex-grow: 1;
   cursor: pointer;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 5px;
   user-select: none;
   -webkit-user-select: none;
