@@ -131,16 +131,19 @@ Vue.component("single-bookmark", {
   template: `
     <div :class="{ 'card-box': true, 'arrange-grid': arrangement }">
       <div class="single-bookmark">
-        <div class="overview">
+        <div class="primary-title">
           <img v-if="bookmark.favIconUrl" class="favicon" :src="bookmark.favIconUrl">
           <div class="desc">
             <div class="bm-title" @click="clickText">{{ bookmark.customTitle ? bookmark.customTitle : bookmark.title }}</div>
             <div class="bm-url" @click="clickText">{{ bookmark.url }}</div>
-            <div class="actions-group">
-              <div class="fa fa-minus" @click="removeBookmark"></div>
-              <div class="fa fa-external-link-square" @click="openBookmark"></div>
-            </div>
           </div>
+        </div>
+        <div class="overview">
+          <div class="actions-group">
+            <div class="fa fa-minus" @click="removeBookmark"></div>
+            <div class="fa fa-external-link-square" @click="openBookmark"></div>
+          </div>
+
           <div class="fa fa-caret-down" @click="toggleDetails"></div>
         </div>
         <div class="details" v-if="showDetails">
