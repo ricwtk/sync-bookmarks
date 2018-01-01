@@ -17,8 +17,9 @@ function accountStatusListener(signedIn) {
     getFileId().then(getFileContent).then(resp => {
       let rKeys = Object.keys(resp);
       v_app.bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
-      v_app.sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
-      v_app.sortOrder = rKeys.includes("sortOrder") ? resp.sortOrder : false;
+      v_app.sortFeature = rKeys.includes("webSortFeature") ? resp.webSortFeature : 0;
+      v_app.sortOrder = rKeys.includes("webSortOrder") ? resp.webSortOrder : false;
+      v_app.arrangement = rKeys.includes("webGrid") ? resp.webGrid : false;
     });
   } else {
     v_app.signedIn = false;
@@ -72,8 +73,9 @@ function updateFileContent(fileId) {
     },
     body: JSON.stringify({
       bookmarks: v_app.bookmarks,
-      sortFeature: v_app.sortFeature,
-      sortOrder: v_app.sortOrder
+      webSortFeature: v_app.sortFeature,
+      webSortOrder: v_app.sortOrder,
+      webGrid: v_app.arrangement
     })
   });
 }
@@ -411,9 +413,10 @@ v_app = new Vue({
     refreshFromDatabase: function () {
       getFileId().then(getFileContent).then(resp => {
         let rKeys = Object.keys(resp);
-        v_app.bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
-        v_app.sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
-        v_app.sortOrder = rKeys.includes("sortOrder") ? resp.sortOrder : false;
+        this.bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
+        this.sortFeature = rKeys.includes("webSortFeature") ? resp.webSortFeature : 0;
+        this.sortOrder = rKeys.includes("webSortOrder") ? resp.webSortOrder : false;
+        this.arrangment = rKeys.includes("webGrid") ? resp.webGrid : false;
       });
     },
     showError: function (message) {
@@ -440,12 +443,15 @@ v_app = new Vue({
     },
     changeSortFeature: function (sortFeature) {
       this.sortFeature = sortFeature;
+      getFileId().then(updateFileContent);
     },
     changeSortOrder: function (sortOrder) {
       this.sortOrder = sortOrder;
+      getFileId().then(updateFileContent);
     },
     changeArrangement: function (arrangement) {
       this.arrangement = arrangement;
+      getFileId().then(updateFileContent);
     }
   }
 })
