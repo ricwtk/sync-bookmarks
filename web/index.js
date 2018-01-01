@@ -127,8 +127,7 @@ Vue.component("single-bookmark", {
     },
   },
   template: `
-    <div class="card-box">
-      <!--<div :class="{ 'single-bookmark': true, 'arrange-grid': arrangement">-->
+    <div :class="{ 'card-box': true, 'arrange-grid': arrangement }">
       <div class="single-bookmark">
         <div class="overview">
           <img v-if="bookmark.favIconUrl" class="favicon" :src="bookmark.favIconUrl">
@@ -191,7 +190,7 @@ Vue.component("single-section", {
   template: `
   <div class="sc">
     <div class="sc-title">{{ section.name }}</div>
-    <div class="sc-content">
+    <div :class="{ 'sc-content': true, 'arrange-grid': info.arrangement }">
       <single-bookmark v-for="bm in section.bookmarks"
         :bookmark="bm"
         :all-categories="info.allCategories"

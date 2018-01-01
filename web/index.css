@@ -73,6 +73,9 @@ body {
 .card-box > div {
   margin: 0px 5px 10px;
 }
+.card-box.arrange-grid {
+  width: 250px!important;
+}
 #sign-in-button {
   height: 50px;
   display: flex;
@@ -349,10 +352,11 @@ textarea {
 }
 .sc-content {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
 }
-
-.arrange-grid {
-  /* width: 100px!important; */
+.sc-content.arrange-grid {
+  flex-direction: row;
 }
