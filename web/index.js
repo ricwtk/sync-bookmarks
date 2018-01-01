@@ -129,7 +129,7 @@ Vue.component("single-bookmark", {
     },
   },
   template: `
-    <div :class="{ 'card-box': true, 'arrange-grid': arrangement }">
+    <div :class="{ 'card-box': true, 'arrange-grid': arrangement && !showDetails }">
       <div class="single-bookmark">
         <div class="primary-title">
           <img v-if="bookmark.favIconUrl" class="favicon" :src="bookmark.favIconUrl">
