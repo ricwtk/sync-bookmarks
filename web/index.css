@@ -135,13 +135,6 @@ body {
   align-items: center;
   padding: 24px 16px 16px;
 }
-.overview {
-  display: flex;
-  flex-direction: row;
-  /* box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25); */
-  padding: 20px;
-  align-items: center;
-}
 .single-bookmark .favicon {
   width: 30px;
   height: 30px;
@@ -179,37 +172,41 @@ body {
   align-items: stretch;
 }
 .actions-group > * {
-  padding: 10px;
-  width: 50px;
+  display: flex;
+}
+.actions-group > .left {
+  justify-content: flex-start;
+  flex-grow: 1;
+}
+.actions-group > .right {
+  justify-content: flex-end;
+}
+.actions-group > * > * {
+  margin: 8px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  flex-grow: 1;
   user-select: none;
   -moz-user-select: none;
 }
-.actions-group > *:hover {
+.actions-group > * > *:not(:first-child) {
+  margin-left: 0px;
+}
+.actions-group > * > *:hover {
   background-color: #eee;
 }
-.single-bookmark .fa-caret-down, .single-bookmark .fa-caret-up {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  border-radius: 30px;
-}
-.single-bookmark .fa-caret-down:hover, .single-bookmark .fa-caret-up:hover {
-  background-color: #eee;
+.actions-group > .fa-caret-down, .actions-group > .fa-caret-up {
+  align-self: flex-end;
 }
 .details {
-  padding: 10px;
+  padding: 16px 16px 24px 16px;
 }
 .details > * {
   display: flex;
-  margin: 10px 0px;
+  /* margin: 10px 0px; */
 }
 .details .title-edit {
   align-items: center;

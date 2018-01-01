@@ -138,13 +138,14 @@ Vue.component("single-bookmark", {
             <div class="bm-url" @click="clickText">{{ bookmark.url }}</div>
           </div>
         </div>
-        <div class="overview">
-          <div class="actions-group">
+        <div class="actions-group">
+          <div class="left">
             <div class="fa fa-minus" @click="removeBookmark"></div>
             <div class="fa fa-external-link-square" @click="openBookmark"></div>
           </div>
-
-          <div class="fa fa-caret-down" @click="toggleDetails"></div>
+          <div class="right">
+            <div :class="{ fa: true, 'fa-angle-down': !showDetails, 'fa-angle-up': showDetails }" @click="toggleDetails"></div>
+          </div>
         </div>
         <div class="details" v-if="showDetails">
           <div class="title-edit">
