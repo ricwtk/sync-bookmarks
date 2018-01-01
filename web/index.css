@@ -66,13 +66,17 @@ body {
   align-items: center;
 }
 
-#sign-in-button {
-  height: 50px;
+.card-box {
   width: 80%;
   max-width: 600px;
+}
+.card-box > div {
+  margin: 0px 5px 10px;
+}
+#sign-in-button {
+  height: 50px;
   display: flex;
   flex-direction: row;
-  margin-bottom: 8px;
 }
 .buttonContentWrapper {
   width: 100%;
@@ -102,12 +106,9 @@ body {
 }
 
 #no-bookmark-message, .single-bookmark, .ds-wrapper {
-  width: 80%;
-  max-width: 600px;
   color: #757575;
   box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25);
   display: flex;
-  margin-bottom: 10px;
 }
 
 #no-bookmark-message {
@@ -341,4 +342,17 @@ textarea {
   color: #757575;
   align-self: stretch;
   margin: 10px 20px 0px 20px;
+}
+.sc-title {
+  text-align: center;
+  margin: 3px 0px 5px 0px;
+}
+.sc-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.arrange-grid {
+  /* width: 100px!important; */
 }

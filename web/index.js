@@ -79,7 +79,7 @@ function updateFileContent(fileId) {
 }
 
 Vue.component("single-bookmark", {
-  props: ["bookmark", "allCategories"],
+  props: ["bookmark", "allCategories", "arrangement"],
   data: function () {
     return {
       showDetails: false
@@ -127,45 +127,48 @@ Vue.component("single-bookmark", {
     },
   },
   template: `
-    <div class="single-bookmark">
-      <div class="overview">
-        <img v-if="bookmark.favIconUrl" class="favicon" :src="bookmark.favIconUrl">
-        <div class="desc">
-          <div class="bm-title" @click="clickText">{{ bookmark.customTitle ? bookmark.customTitle : bookmark.title }}</div>
-          <div class="bm-url" @click="clickText">{{ bookmark.url }}</div>
-          <div class="actions-group">
-            <div class="fa fa-minus" @click="removeBookmark"></div>
-            <div class="fa fa-external-link-square" @click="openBookmark"></div>
+    <div class="card-box">
+      <!--<div :class="{ 'single-bookmark': true, 'arrange-grid': arrangement">-->
+      <div class="single-bookmark">
+        <div class="overview">
+          <img v-if="bookmark.favIconUrl" class="favicon" :src="bookmark.favIconUrl">
+          <div class="desc">
+            <div class="bm-title" @click="clickText">{{ bookmark.customTitle ? bookmark.customTitle : bookmark.title }}</div>
+            <div class="bm-url" @click="clickText">{{ bookmark.url }}</div>
+            <div class="actions-group">
+              <div class="fa fa-minus" @click="removeBookmark"></div>
+              <div class="fa fa-external-link-square" @click="openBookmark"></div>
+            </div>
           </div>
+          <div class="fa fa-caret-down" @click="toggleDetails"></div>
         </div>
-        <div class="fa fa-caret-down" @click="toggleDetails"></div>
-      </div>
-      <div class="details" v-if="showDetails">
-        <div class="title-edit">
-          Custom title: <input type="text" v-model="bookmark.customTitle">
-        </div>
-        <div class="cat-edit">
-          <div class="cat-display">
-            Categories:
-            <span v-for="cat in bookmark.categories" class="tag">
+        <div class="details" v-if="showDetails">
+          <div class="title-edit">
+            Custom title: <input type="text" v-model="bookmark.customTitle">
+          </div>
+          <div class="cat-edit">
+            <div class="cat-display">
+              Categories:
+              <span v-for="cat in bookmark.categories" class="tag">
+                {{ cat }}
+                <i class="fa fa-times" :data-tagname="cat"></i>
+              </span>
+            </div>
+            <div class="cat-input">
+              <i class="fa fa-plus"></i>
+              <input type="text" @input="monitorInput" @change="enterCat">
+            </div>
+            <div class="more-cat-display">
+            <span v-for="cat in notCat" class="tag">
               {{ cat }}
-              <i class="fa fa-times" :data-tagname="cat"></i>
+              <i class="tag-action fa fa-plus" :data-tagname="cat"></i>
             </span>
+            </div>
           </div>
-          <div class="cat-input">
-            <i class="fa fa-plus"></i>
-            <input type="text" @input="monitorInput" @change="enterCat">
+          <div class="desc-edit">
+            Description:
+            <textarea v-model="bookmark.description" rows="5">
           </div>
-          <div class="more-cat-display">
-          <span v-for="cat in notCat" class="tag">
-            {{ cat }}
-            <i class="tag-action fa fa-plus" :data-tagname="cat"></i>
-          </span>
-          </div>
-        </div>
-        <div class="desc-edit">
-          Description:
-          <textarea v-model="bookmark.description" rows="5">
         </div>
       </div>
     </div>
@@ -192,6 +195,7 @@ Vue.component("single-section", {
       <single-bookmark v-for="bm in section.bookmarks"
         :bookmark="bm"
         :all-categories="info.allCategories"
+        :arrangement="info.arrangement"
         @clicktext="clickText"
         @error="showError"
         @addcat="addCat">
@@ -299,11 +303,13 @@ Vue.component("display-settings", {
     }
   },
   template: `
-  <div class="ds-wrapper">
-    <div class="ds">
-      <div :class="sortOrderIcon" @click="changeSortOrder"></div>
-      <div @click="changeSortFeature">{{ sortFeatureAll[sortFeature] }}</div>
-      <div :class="arrangeIcon" @click="changeArrangement"></div>
+  <div class="card-box">
+    <div class="ds-wrapper">
+      <div class="ds">
+        <div :class="sortOrderIcon" @click="changeSortOrder"></div>
+        <div @click="changeSortFeature">{{ sortFeatureAll[sortFeature] }}</div>
+        <div :class="arrangeIcon" @click="changeArrangement"></div>
+      </div>
     </div>
   </div>
   `
