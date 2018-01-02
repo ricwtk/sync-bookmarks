@@ -148,7 +148,25 @@ Vue.component("single-bookmark", {
           </div>
         </div>
         <div class="details" v-if="showDetails">
-          <div class="title-edit">
+          <div>
+            <div class="section-title">Default title</div>
+            <div class="text-display">&#8203;{{ bookmark.title }}</div>
+          </div>
+          <div>
+            <div class="section-title">Title <i class="fa fa-pencil"></i></div>
+            <div class="text-display">&#8203;{{ bookmark.customTitle }}</div>
+          </div>
+          <div>
+            <div class="section-title">Categories <i class="fa fa-pencil"></i></div>
+            <div class="cat-display">
+              &#8203;<span v-for="cat in bookmark.categories" class="tag">{{ cat }}</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-title">Description <i class="fa fa-pencil"></i></div>
+            <div class="desc-display">{{ bookmark.description }}</div>
+          </div>
+          <!--<div class="title-edit">
             Custom title: <input type="text" v-model="bookmark.customTitle">
           </div>
           <div class="cat-edit">
@@ -173,7 +191,7 @@ Vue.component("single-bookmark", {
           <div class="desc-edit">
             Description:
             <textarea v-model="bookmark.description" rows="5">
-          </div>
+          </div>-->
         </div>
       </div>
     </div>
