@@ -85,7 +85,12 @@ Vue.component("single-bookmark", {
   data: function () {
     return {
       showDetails: false,
-      edit: {}
+      edit: {},
+      allowEdit: {
+        customTitle: false,
+        categories: false,
+        description: false
+      }
     }
   },
   computed: {
@@ -117,12 +122,18 @@ Vue.component("single-bookmark", {
       this.$emit("clicktext", el.target.textContent);
     },
     accept: function (key) {
-      console.log("accept", this.edit[key], this.bookmark[key]);
       this.$emit("change"+key.toLowerCase(), { url: this.bookmark.url, new: this.edit[key] });
+      this.allowEdit[key] = !this.allowEdit[key];
     },
     reject: function (key) {
-      console.log("reject", this.edit[key], this.bookmark[key]);
       this.edit[key] = this.bookmark[key];
+      this.allowEdit[key] = !this.allowEdit[key];
+    },
+    toggleEdit: function (key) {
+      this.allowEdit[key] = !this.allowEdit[key];
+      if (!this.allowEdit[key]) {
+        this.edit[key] = this.bookmark[key];
+      }
     },
     monitorInput: function (el) {
       let catEntry = el.target.value;
@@ -168,9 +179,9 @@ Vue.component("single-bookmark", {
             <div class="text-display">&#8203;{{ bookmark.title }}</div>
           </div>
           <div>
-            <div class="section-title">Title <i class="fa fa-pencil action"></i></div>
-            <div class="text-display">&#8203;{{ bookmark.customTitle }}</div>
-            <div class="text-edit">
+            <div class="section-title">Title <i class="fa fa-pencil action" @click="toggleEdit('customTitle')"></i></div>
+            <div class="text-display" v-if="!allowEdit.customTitle">&#8203;{{ bookmark.customTitle }}</div>
+            <div class="text-edit" v-else>
               <input type="text" v-model="edit.customTitle">
               <i class="fa fa-check action" @click="accept('customTitle')"></i>
               <i class="fa fa-times action" @click="reject('customTitle')"></i>
@@ -183,17 +194,15 @@ Vue.component("single-bookmark", {
             </div>
           </div>
           <div>
-            <div class="section-title">Description <i class="fa fa-pencil action"></i></div>
-            <div class="desc-display">{{ bookmark.description }}</div>
-            <div class="desc-edit">
-              <textarea v-model="edit.description" rows="5"></textarea>
+            <div class="section-title">Description <i class="fa fa-pencil action" @click="toggleEdit('description')"></i></div>
+            <div class="desc-display" v-if="!allowEdit.description">{{ bookmark.description }}</div>
+            <div class="desc-edit" v-else>
+              <textarea v-model="edit.description"></textarea>
               <i class="fa fa-check action" @click="accept('description')"></i>
               <i class="fa fa-times action" @click="reject('description')"></i>
             </div>
           </div>
-          <!--<div class="title-edit">
-            Custom title: <input type="text" v-model="bookmark.customTitle">
-          </div>
+          <!--
           <div class="cat-edit">
             <div class="cat-display">
               Categories:
@@ -213,10 +222,7 @@ Vue.component("single-bookmark", {
             </span>
             </div>
           </div>
-          <div class="desc-edit">
-            Description:
-            <textarea v-model="bookmark.description" rows="5">
-          </div>-->
+          -->
         </div>
       </div>
     </div>
