@@ -215,25 +215,35 @@ body {
   font-weight: 700;
   font-size: 80%;
 }
-.details > * > *:nth-child(2) {
+.details > * > *:not(:first-child) {
   font-weight: 300;
 }
-.details .fa-pencil {
+.details .action {
   opacity: 0.25;
 }
-.details .fa-pencil:hover {
+.details .action:hover {
   opacity: 1;
+}
+.details .text-edit, .details .desc-edit {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+.details .text-edit .action, .details .desc-edit .action {
+  margin-left: 8px;
 }
 .details .desc-display {
   word-wrap: wrap;
   width: 100%;
   height: 10em;
 }
-
-.details .title-edit {
-  align-items: center;
+.details input[type="text"], .details textarea {
+  font-size: 100%;
+  font-weight: inherit;
+  flex-grow: 1;
 }
-.details .desc-edit, .details .cat-edit {
+
+.details .cat-edit {
   flex-direction: column;
 }
 .cat-input {

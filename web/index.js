@@ -153,18 +153,28 @@ Vue.component("single-bookmark", {
             <div class="text-display">&#8203;{{ bookmark.title }}</div>
           </div>
           <div>
-            <div class="section-title">Title <i class="fa fa-pencil"></i></div>
+            <div class="section-title">Title <i class="fa fa-pencil action"></i></div>
             <div class="text-display">&#8203;{{ bookmark.customTitle }}</div>
+            <div class="text-edit">
+              <input type="text">
+              <i class="fa fa-check action"></i>
+              <i class="fa fa-times action"></i>
+            </div>
           </div>
           <div>
-            <div class="section-title">Categories <i class="fa fa-pencil"></i></div>
+            <div class="section-title">Categories <i class="fa fa-pencil action"></i></div>
             <div class="cat-display">
               &#8203;<span v-for="cat in bookmark.categories" class="tag">{{ cat }}</span>
             </div>
           </div>
           <div>
-            <div class="section-title">Description <i class="fa fa-pencil"></i></div>
+            <div class="section-title">Description <i class="fa fa-pencil action"></i></div>
             <div class="desc-display">{{ bookmark.description }}</div>
+            <div class="desc-edit">
+              <textarea v-model="bookmark.description" rows="5"></textarea>
+              <i class="fa fa-check action"></i>
+              <i class="fa fa-times action"></i>
+            </div>
           </div>
           <!--<div class="title-edit">
             Custom title: <input type="text" v-model="bookmark.customTitle">
