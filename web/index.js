@@ -84,13 +84,20 @@ Vue.component("single-bookmark", {
   props: ["bookmark", "allCategories", "arrangement"],
   data: function () {
     return {
-      showDetails: false
+      showDetails: false,
+      edit: {}
     }
   },
   computed: {
     notCat: function () {
       return this.allCategories.filter(c => !this.bookmark.categories.includes(c));
     }
+  },
+  created: function () {
+    this.edit = {
+      customTitle: this.bookmark.customTitle,
+      description: this.bookmark.description
+    };
   },
   methods: {
     toggleDetails: function () {
@@ -108,6 +115,14 @@ Vue.component("single-bookmark", {
     },
     clickText: function (el) {
       this.$emit("clicktext", el.target.textContent);
+    },
+    accept: function (key) {
+      console.log("accept", this.edit[key], this.bookmark[key]);
+      this.$emit("change"+key.toLowerCase(), { url: this.bookmark.url, new: this.edit[key] });
+    },
+    reject: function (key) {
+      console.log("reject", this.edit[key], this.bookmark[key]);
+      this.edit[key] = this.bookmark[key];
     },
     monitorInput: function (el) {
       let catEntry = el.target.value;
@@ -156,9 +171,9 @@ Vue.component("single-bookmark", {
             <div class="section-title">Title <i class="fa fa-pencil action"></i></div>
             <div class="text-display">&#8203;{{ bookmark.customTitle }}</div>
             <div class="text-edit">
-              <input type="text">
-              <i class="fa fa-check action"></i>
-              <i class="fa fa-times action"></i>
+              <input type="text" v-model="edit.customTitle">
+              <i class="fa fa-check action" @click="accept('customTitle')"></i>
+              <i class="fa fa-times action" @click="reject('customTitle')"></i>
             </div>
           </div>
           <div>
@@ -171,9 +186,9 @@ Vue.component("single-bookmark", {
             <div class="section-title">Description <i class="fa fa-pencil action"></i></div>
             <div class="desc-display">{{ bookmark.description }}</div>
             <div class="desc-edit">
-              <textarea v-model="bookmark.description" rows="5"></textarea>
-              <i class="fa fa-check action"></i>
-              <i class="fa fa-times action"></i>
+              <textarea v-model="edit.description" rows="5"></textarea>
+              <i class="fa fa-check action" @click="accept('description')"></i>
+              <i class="fa fa-times action" @click="reject('description')"></i>
             </div>
           </div>
           <!--<div class="title-edit">
@@ -219,6 +234,12 @@ Vue.component("single-section", {
     },
     addCat: function (param) {
       this.$emit("addcat", param);
+    },
+    changeCustomTitle: function (param) {
+      this.$emit("changecustomtitle", param);
+    },
+    changeDescription: function (param) {
+      this.$emit("changedescription", param);
     }
   },
   template: `
@@ -231,7 +252,9 @@ Vue.component("single-section", {
         :arrangement="info.arrangement"
         @clicktext="clickText"
         @error="showError"
-        @addcat="addCat">
+        @addcat="addCat"
+        @changecustomtitle="changeCustomTitle"
+        @changedescription="changeDescription">
       </single-bookmark>
     </div>
   </div>
@@ -481,6 +504,18 @@ v_app = new Vue({
     },
     changeArrangement: function (arrangement) {
       this.arrangement = arrangement;
+      getFileId().then(updateFileContent);
+    },
+    changeCustomTitle: function (param) {
+      console.log(param);
+      let tbm = this.bookmarks.find(bm => bm.url == param.url);
+      tbm.customTitle = param.new;
+      getFileId().then(updateFileContent);
+    },
+    changeDescription: function (param) {
+      console.log(param);
+      let tbm = this.bookmarks.find(bm => bm.url == param.url);
+      tbm.description = param.new;
       getFileId().then(updateFileContent);
     }
   }
