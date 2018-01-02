@@ -165,11 +165,11 @@ Vue.component("single-bookmark", {
           </div>
         </div>
         <div class="actions-group">
-          <div class="left">
+          <div>
             <div class="fa fa-minus" @click="removeBookmark"></div>
             <div class="fa fa-external-link-square" @click="openBookmark"></div>
           </div>
-          <div class="right">
+          <div>
             <div :class="{ fa: true, 'fa-angle-down': !showDetails, 'fa-angle-up': showDetails }" @click="toggleDetails"></div>
           </div>
         </div>
@@ -188,9 +188,13 @@ Vue.component("single-bookmark", {
             </div>
           </div>
           <div>
-            <div class="section-title">Categories <i class="fa fa-pencil action"></i></div>
+            <div class="section-title">Categories <i class="fa fa-pencil action" @click="toggleEdit('categories')"></i></div>
             <div class="cat-display">
-              &#8203;<span v-for="cat in bookmark.categories" class="tag">{{ cat }}</span>
+              &#8203;
+              <span v-for="cat in bookmark.categories" :class="{ tag: true, edit: allowEdit.categories }">
+                {{ cat }}
+                <i v-if="allowEdit.categories" class="fa fa-times-circle"></i>
+              </span>
             </div>
           </div>
           <div>

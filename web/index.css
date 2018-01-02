@@ -170,16 +170,10 @@ body {
   align-self: stretch;
   display: flex;
   align-items: stretch;
+  justify-content: space-between;
 }
 .actions-group > * {
   display: flex;
-}
-.actions-group > .left {
-  justify-content: flex-start;
-  flex-grow: 1;
-}
-.actions-group > .right {
-  justify-content: flex-end;
 }
 .actions-group > * > * {
   margin: 8px;
@@ -245,6 +239,34 @@ body {
   font-weight: inherit;
   flex-grow: 1;
 }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #eee;
+  padding: 0px 12px;
+  height: 32px;
+  margin: 2px;
+  border-radius: 24px;
+}
+.tag.edit {
+  padding: 0px 4px 0px 12px;
+}
+.tag .fa {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  width: 24px;
+  height: 24px;
+  margin-left: 4px;
+}
+.tag:hover {
+  background-color: #888;
+  color: #fff;
+}
+.tag:hover .fa {
+  color: #fff;
+}
 
 .details .cat-edit {
   flex-direction: column;
@@ -252,26 +274,6 @@ body {
 .cat-input {
   display: flex;
   align-items: center;
-}
-.tag {
-  display: inline-flex;
-  align-items: center;
-  background-color: #eee;
-  padding: 3px 5px 3px 8px;
-  border-radius: 1em;
-  margin: 2px;
-}
-.tag .fa {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-color: #bbb;
-  width: 20px;
-  height: 20px;
-  border-radius: 20px;
-  margin-left: 4px;
-  cursor: pointer;
 }
 
 textarea, input[type="text"] {
