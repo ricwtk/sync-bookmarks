@@ -537,13 +537,11 @@ v_app = new Vue({
       this.messagePrompt = [{
         text: "Remove",
         click: () => {
-          console.log(this.messageTitle);
+          this.bookmarks.splice(this.bookmarks.findIndex(bm => bm.url == param), 1);
+          getFileId().then(updateFileContent);
         }
       }, {
-        text: "Keep",
-        click: () => {
-          console.log(this.message);
-        }
+        text: "Keep"
       }]
     }
   }

@@ -326,7 +326,6 @@ textarea {
   width: auto;
   background-color: white;
   color: #757575;
-  /* padding: 10px; */
   margin: 10px;
   border-radius: 3px;
   display: flex;
@@ -335,29 +334,6 @@ textarea {
   align-items: stretch;
   font-size: 67%;
 }
-/* .message-wrapper .title {
-  font-weight: lighter;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-.message-wrapper .prompt {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-top: 16px;
-}
-.message-wrapper .prompt > div {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-}
-.message-wrapper .prompt > div:hover {
-  background-color: #ddd;
-  color: #fff;
-} */
 .message-wrapper .title {
   font-weight: bolder;
   font-size: 130%;
