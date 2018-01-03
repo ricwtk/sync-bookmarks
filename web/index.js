@@ -121,12 +121,12 @@ Vue.component("single-bookmark", {
     removeBookmark: function () {
       this.$emit("removebookmark", this.bookmark.url);
     },
-    clickText: function (el) {
+    clickText: function (ev) {
       let title = "";
-      let cl = Array.from(el.target.classList);
+      let cl = Array.from(ev.target.classList);
       if (cl.includes("bm-title")) title = "Title";
       if (cl.includes("bm-url")) title = "URL";
-      this.$emit("clicktext", { title: title, message: el.target.textContent });
+      this.$emit("clicktext", { title: title, message: ev.target.textContent });
     },
     accept: function (key) {
       this.$emit("change"+key.toLowerCase(), { url: this.bookmark.url, new: this.edit[key] });
@@ -168,20 +168,20 @@ Vue.component("single-bookmark", {
   template: `
     <div :class="{ 'card-box': true, 'arrange-grid': arrangement && !showDetails, 'show-details': showDetails }">
       <div class="single-bookmark">
-        <div class="primary-title">
+        <div class="primary-title" @click="toggleDetails">
           <img v-if="bookmark.favIconUrl" class="favicon" :src="bookmark.favIconUrl">
           <div class="desc">
-            <div class="bm-title" @click="clickText">{{ bookmark.customTitle ? bookmark.customTitle : bookmark.title }}</div>
-            <div class="bm-url" @click="clickText">{{ bookmark.url }}</div>
+            <div class="bm-title" @click.stop="clickText">{{ bookmark.customTitle ? bookmark.customTitle : bookmark.title }}</div>
+            <div class="bm-url" @click.stop="clickText">{{ bookmark.url }}</div>
           </div>
         </div>
-        <div class="actions-group">
+        <div class="actions-group" @click="toggleDetails">
           <div>
-            <div class="fa fa-minus" @click="removeBookmark"></div>
-            <div class="fa fa-external-link-square" @click="openBookmark"></div>
+            <div class="fa fa-minus" @click.stop="removeBookmark"></div>
+            <div class="fa fa-external-link-square" @click.stop="openBookmark"></div>
           </div>
           <div>
-            <div :class="{ fa: true, 'fa-angle-down': !showDetails, 'fa-angle-up': showDetails }" @click="toggleDetails"></div>
+            <div :class="{ fa: true, 'fa-angle-down': !showDetails, 'fa-angle-up': showDetails }" @click.stop="toggleDetails"></div>
           </div>
         </div>
         <div class="details" v-if="showDetails">
@@ -313,7 +313,7 @@ Vue.component("global-actions", {
 });
 
 Vue.component("message", {
-  props: ["title", "message"],
+  props: ["title", "message", "prompt"],
   methods: {
     close: function () {
       this.$emit("close");
@@ -327,6 +327,7 @@ Vue.component("message", {
     <div class="content">
       <div class="title" v-if="title">{{ title }}</div>
       <div class="message">{{ message }}</div>
+      <div class="prompt" v-if="prompt"></div>
     </div>
   </div>
   `
