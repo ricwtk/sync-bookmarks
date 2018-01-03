@@ -80,8 +80,8 @@
       @refresh="refreshFromDatabase">
     </global-actions>
     <message v-if="message"
+      :title="messageTitle"
       :message="message"
-      :type="messageType"
       @close="closeMessage">
     </message>
   </div>

@@ -122,7 +122,11 @@ Vue.component("single-bookmark", {
       this.$emit("removebookmark", this.bookmark.url);
     },
     clickText: function (el) {
-      this.$emit("clicktext", el.target.textContent);
+      let title = "";
+      let cl = Array.from(el.target.classList);
+      if (cl.includes("bm-title")) title = "Title";
+      if (cl.includes("bm-url")) title = "URL";
+      this.$emit("clicktext", { title: title, message: el.target.textContent });
     },
     accept: function (key) {
       this.$emit("change"+key.toLowerCase(), { url: this.bookmark.url, new: this.edit[key] });
@@ -309,25 +313,20 @@ Vue.component("global-actions", {
 });
 
 Vue.component("message", {
-  props: ["message", "type"],
-  computed: {
-    msgCls: function () {
-      return {
-        message: true,
-        "error-message": this.type == "error"
-      }
-    }
-  },
+  props: ["title", "message"],
   methods: {
     close: function () {
       this.$emit("close");
+    },
+    hide: function (el) {
+      if (el.target == this.$el) this.close();
     }
   },
   template: `
-  <div class="message-wrapper">
-    <div :class="msgCls">
-      {{ message }}
-      <span class="close-message fa fa-times" title="close message" @click="close"></span>
+  <div class="message-wrapper" @click="hide">
+    <div class="content">
+      <div class="title" v-if="title">{{ title }}</div>
+      <div class="message">{{ message }}</div>
     </div>
   </div>
   `
@@ -389,8 +388,8 @@ v_app = new Vue({
     arrangement: false,
     signedIn: false,
     email: "",
+    messageTitle: "",
     message: "",
-    messageType: "info",
     sortFeatureAllKeys: ["categories", "title", "url", "savedDate"]
   },
   computed: {
@@ -469,17 +468,17 @@ v_app = new Vue({
       });
     },
     showError: function (message) {
-      this.setMessage(message, "error");
+      this.setMessage("Error", message);
     },
     closeMessage: function () {
       this.message = "";
     },
-    showText: function (text) {
-      this.setMessage(text, "info");
+    showText: function (m) {
+      this.setMessage(m.title, m.message);
     },
-    setMessage: function (message, type) {
+    setMessage: function (title, message) {
       this.message = message;
-      this.messageType = type;
+      this.messageTitle = title;
       // setTimeout(() => {
       //   if (this.message == message) this.message = "";
       // }, 3000);
