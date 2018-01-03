@@ -254,6 +254,9 @@ Vue.component("single-section", {
     },
     changeDescription: function (param) {
       this.$emit("changedescription", param);
+    },
+    removeBookmark: function (param) {
+      this.$emit("removebookmark", param);
     }
   },
   template: `
@@ -269,7 +272,8 @@ Vue.component("single-section", {
         @addcat="addCat"
         @changecustomtitle="changeCustomTitle"
         @changedescription="changeDescription"
-        @removecat="removeCat">
+        @removecat="removeCat"
+        @removebookmark="removeBookmark">
       </single-bookmark>
     </div>
   </div>
@@ -318,16 +322,22 @@ Vue.component("message", {
     close: function () {
       this.$emit("close");
     },
-    hide: function (el) {
-      if (el.target == this.$el) this.close();
+    hide: function (ev) {
+      if (ev.target == this.$el) this.close();
+    },
+    activate: function (p) {
+      if (p.click) p.click();
+      this.close();
     }
   },
   template: `
   <div class="message-wrapper" @click="hide">
     <div class="content">
-      <div class="title" v-if="title">{{ title }}</div>
-      <div class="message">{{ message }}</div>
-      <div class="prompt" v-if="prompt"></div>
+      <div class="title" v-if="title" v-html="title"></div>
+      <div class="message" v-html="message"></div>
+      <div class="prompt" v-if="prompt">
+        <div v-for="p in prompt" @click="activate(p)" v-html="p.text"></div>
+      </div>
     </div>
   </div>
   `
@@ -391,6 +401,7 @@ v_app = new Vue({
     email: "",
     messageTitle: "",
     message: "",
+    messagePrompt: [],
     sortFeatureAllKeys: ["categories", "title", "url", "savedDate"]
   },
   computed: {
@@ -472,14 +483,16 @@ v_app = new Vue({
       this.setMessage("Error", message);
     },
     closeMessage: function () {
+      this.messageTitle = "";
       this.message = "";
+      this.messagePrompt = [];
     },
     showText: function (m) {
       this.setMessage(m.title, m.message);
     },
     setMessage: function (title, message) {
-      this.message = message;
       this.messageTitle = title;
+      this.message = message;
       // setTimeout(() => {
       //   if (this.message == message) this.message = "";
       // }, 3000);
@@ -517,6 +530,21 @@ v_app = new Vue({
       let tbm = this.bookmarks.find(bm => bm.url == param.url);
       tbm.description = param.new;
       getFileId().then(updateFileContent);
+    },
+    removeBookmark: function (param) {
+      this.messageTitle = "Remove bookmark?";
+      this.message = "Do you want to remove bookmark " + param + "?";
+      this.messagePrompt = [{
+        text: "Remove",
+        click: () => {
+          console.log(this.messageTitle);
+        }
+      }, {
+        text: "Keep",
+        click: () => {
+          console.log(this.message);
+        }
+      }]
     }
   }
 })
