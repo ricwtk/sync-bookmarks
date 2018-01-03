@@ -70,6 +70,7 @@ body {
 .card-box {
   width: 80%;
   max-width: 600px;
+  transition: all .5s;
 }
 .card-box > div {
   margin: 0px 5px 10px;
