@@ -358,6 +358,7 @@ textarea {
   -webkit-user-select: none;
   -moz-user-select: none;
   display: flex;
+  justify-content: center;
   align-items: center;
   color: #827717;
   min-width: 48px;
