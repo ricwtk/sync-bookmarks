@@ -94,6 +94,9 @@ Vue.component("single-bookmark", {
     }
   },
   computed: {
+    sortedCat: function () {
+      return Array.from(this.bookmark.categories).sort((a,b) => a.localeCompare(b));
+    },
     notCat: function () {
       return this.allCategories.filter(c => !this.bookmark.categories.includes(c));
     }
@@ -135,6 +138,9 @@ Vue.component("single-bookmark", {
         this.edit[key] = this.bookmark[key];
       }
     },
+    removeCat: function (el) {
+      this.$emit("removecat", { url: this.bookmark.url, remove: el.target.dataset.tagname });
+    },
     monitorInput: function (el) {
       let catEntry = el.target.value;
       if (catEntry[catEntry.length-1] == ",") {
@@ -148,10 +154,11 @@ Vue.component("single-bookmark", {
       this.addCat(catEntry);
       el.target.value = "";
     },
+    addExistingCat: function (el) {
+      this.addCat(el.target.dataset.tagname);
+    },
     addCat: function (newCat) {
       this.$emit("addcat", { url: this.bookmark.url, newCat: newCat });
-      this.bookmark.categories.push(newCat);
-      this.bookmark.categories = this.bookmark.categories.filter((s,i,a) => a.indexOf(s) == i);
     },
   },
   template: `
@@ -191,9 +198,16 @@ Vue.component("single-bookmark", {
             <div class="section-title">Categories <i class="fa fa-pencil action" @click="toggleEdit('categories')"></i></div>
             <div class="cat-display">
               &#8203;
-              <span v-for="cat in bookmark.categories" :class="{ tag: true, edit: allowEdit.categories }">
+              <span v-for="cat in sortedCat" :class="{ tag: true, edit: allowEdit.categories }">
                 {{ cat }}
-                <i v-if="allowEdit.categories" class="fa fa-times-circle"></i>
+                <i v-if="allowEdit.categories" class="fa fa-times-circle" :data-tagname="cat" @click="removeCat"></i>
+              </span>
+            </div>
+            <input v-if="allowEdit.categories" type="text" placeholder="Use comma (,) or 'Enter' to end or save a category." @input="monitorInput" @change="enterCat">
+            <div v-if="allowEdit.categories" class="cat-display">
+              <span v-for="cat in notCat" class="tag edit">
+                {{ cat }}
+                <i class="fa fa-plus-circle" :data-tagname="cat" @click="addExistingCat"></i>
               </span>
             </div>
           </div>
@@ -206,27 +220,6 @@ Vue.component("single-bookmark", {
               <i class="fa fa-times action" @click="reject('description')"></i>
             </div>
           </div>
-          <!--
-          <div class="cat-edit">
-            <div class="cat-display">
-              Categories:
-              <span v-for="cat in bookmark.categories" class="tag">
-                {{ cat }}
-                <i class="fa fa-times" :data-tagname="cat"></i>
-              </span>
-            </div>
-            <div class="cat-input">
-              <i class="fa fa-plus"></i>
-              <input type="text" @input="monitorInput" @change="enterCat">
-            </div>
-            <div class="more-cat-display">
-            <span v-for="cat in notCat" class="tag">
-              {{ cat }}
-              <i class="tag-action fa fa-plus" :data-tagname="cat"></i>
-            </span>
-            </div>
-          </div>
-          -->
         </div>
       </div>
     </div>
@@ -241,6 +234,9 @@ Vue.component("single-section", {
     },
     showError: function (param) {
       this.$emit("error", param);
+    },
+    removeCat: function (param) {
+      this.$emit("removecat", param);
     },
     addCat: function (param) {
       this.$emit("addcat", param);
@@ -264,7 +260,8 @@ Vue.component("single-section", {
         @error="showError"
         @addcat="addCat"
         @changecustomtitle="changeCustomTitle"
-        @changedescription="changeDescription">
+        @changedescription="changeDescription"
+        @removecat="removeCat">
       </single-bookmark>
     </div>
   </div>
@@ -458,21 +455,6 @@ v_app = new Vue({
       if (this.signedIn) signOutAccount();
       else signInAccount();
     },
-    removeWindow: function (wid, tid) {
-      console.log("removeWindow", wid, tid);
-      if (tid == undefined) {
-        let conf = confirm("Delete the window?");
-        if (conf) this.savedWindows.splice(wid, 1);
-      } else {
-        let conf = confirm("Delete tab: " + this.savedWindows[wid].tabs[tid].title + "?");
-        if (conf) {
-          this.savedWindows[wid].tabs.splice(tid, 1);
-          if (this.savedWindows[wid].tabs.length == 0) this.savedWindows.splice(wid, 1);
-        }
-      }
-      // save to database
-      getFileId().then(updateFileContent);
-    },
     refreshFromDatabase: function () {
       getFileId().then(getFileContent).then(resp => {
         let rKeys = Object.keys(resp);
@@ -504,6 +486,12 @@ v_app = new Vue({
       tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
       getFileId().then(updateFileContent);
     },
+    removeCat: function (m) {
+      let tbm = this.bookmarks.find(bm => bm.url == m.url);
+      let removeIdx = tbm.categories.indexOf(m.remove);
+      if (removeIdx > -1) tbm.categories.splice(removeIdx, 1);
+      getFileId().then(updateFileContent);
+    },
     changeSortFeature: function (sortFeature) {
       this.sortFeature = sortFeature;
       getFileId().then(updateFileContent);
@@ -517,13 +505,11 @@ v_app = new Vue({
       getFileId().then(updateFileContent);
     },
     changeCustomTitle: function (param) {
-      console.log(param);
       let tbm = this.bookmarks.find(bm => bm.url == param.url);
       tbm.customTitle = param.new;
       getFileId().then(updateFileContent);
     },
     changeDescription: function (param) {
-      console.log(param);
       let tbm = this.bookmarks.find(bm => bm.url == param.url);
       tbm.description = param.new;
       getFileId().then(updateFileContent);
