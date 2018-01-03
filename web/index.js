@@ -162,7 +162,7 @@ Vue.component("single-bookmark", {
     },
   },
   template: `
-    <div :class="{ 'card-box': true, 'arrange-grid': arrangement && !showDetails }">
+    <div :class="{ 'card-box': true, 'arrange-grid': arrangement && !showDetails, 'show-details': showDetails }">
       <div class="single-bookmark">
         <div class="primary-title">
           <img v-if="bookmark.favIconUrl" class="favicon" :src="bookmark.favIconUrl">
@@ -184,6 +184,10 @@ Vue.component("single-bookmark", {
           <div>
             <div class="section-title">Default title</div>
             <div class="text-display">&#8203;{{ bookmark.title }}</div>
+          </div>
+          <div>
+            <div class="section-title">URL</div>
+            <div class="text-display">&#8203;{{ bookmark.url }}</div>
           </div>
           <div>
             <div class="section-title">Title <i class="fa fa-pencil action" @click="toggleEdit('customTitle')"></i></div>
