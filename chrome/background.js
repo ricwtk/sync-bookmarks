@@ -161,11 +161,11 @@ function connected(p) {
     }
     if (mKeys.includes("changeCustomTitle")) {
       let tbm = bookmarks.find(bm => bm.url == m.changeCustomTitle.url);
-      tbm.customTitle = m.changeCustomTitle.customTitle;
+      tbm.customTitle = m.changeCustomTitle.new;
     }
     if (mKeys.includes("changeDescription")) {
       let tbm = bookmarks.find(bm => bm.url == m.changeDescription.url);
-      tbm.description = m.changeDescription.description;
+      tbm.description = m.changeDescription.new;
     }
     dataPort.postMessage({
       bookmarks: bookmarks,

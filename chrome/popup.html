@@ -27,21 +27,14 @@
         @remove="removeBookmark"
         @clicktext="popText"
         @error="popText"
-        @edit="popEdit">
+        @changecustomtitle="changeCustomTitle"
+        @changedescription="changeDescription"
+        @addcat="addCat"
+        @removecat="removeCat">
       </content-list>
       <div class="popup-text" v-if="showPopup" @click="hidePop">
         <div ref="popupText" v-html="popupText"></div>
       </div>
-      <bookmark-edit v-if="showEdit"
-        :mark="bookmarkToEdit"
-        :all-cat="allCat"
-        @hide="showEdit=false"
-        @clicktext="popText"
-        @addcat="addCat"
-        @removecat="removeCat"
-        @changecustomtitle="changeCustomTitle"
-        @changedescription="changeDescription">
-      </bookmark-edit>
       <misc-section
         :use-local="useLocal"
         :remote-account="remoteAccount"
