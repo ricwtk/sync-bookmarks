@@ -110,6 +110,19 @@ Vue.component("single-bookmark", {
   methods: {
     toggleDetails: function () {
       this.showDetails = !this.showDetails;
+      if (this.showDetails) {
+        window.addEventListener("click", this.clickListener);
+        window.addEventListener("keyup", this.keyupListener);
+      } else {
+        window.removeEventListener("click", this.clickListener);
+        window.removeEventListener("keyup", this.keyupListener);
+      }
+    },
+    clickListener: function (ev) {
+      if (!this.$el.contains(ev.target)) this.toggleDetails();
+    },
+    keyupListener: function (ev) {
+      if (ev.keyCode == 27) this.toggleDetails();
     },
     openBookmark: function () {
       try {
@@ -140,6 +153,10 @@ Vue.component("single-bookmark", {
       this.allowEdit[key] = !this.allowEdit[key];
       if (!this.allowEdit[key]) {
         this.edit[key] = this.bookmark[key];
+      } else {
+        Vue.nextTick(() => {
+          this.$refs[key.toLowerCase() + "Input"].focus();
+        });
       }
     },
     removeCat: function (el) {
@@ -197,7 +214,7 @@ Vue.component("single-bookmark", {
             <div class="section-title">Title <i class="fa fa-pencil action" @click="toggleEdit('customTitle')"></i></div>
             <div class="text-display" v-if="!allowEdit.customTitle">&#8203;{{ bookmark.customTitle }}</div>
             <div class="text-edit" v-else>
-              <input type="text" v-model="edit.customTitle">
+              <input type="text" v-model="edit.customTitle" @keyup.esc.stop="reject('customTitle')" @keyup.enter.stop="accept('customTitle')" ref="customtitleInput">
               <i class="fa fa-check action" @click="accept('customTitle')"></i>
               <i class="fa fa-times action" @click="reject('customTitle')"></i>
             </div>
@@ -211,7 +228,7 @@ Vue.component("single-bookmark", {
                 <i v-if="allowEdit.categories" class="fa fa-times-circle" :data-tagname="cat" @click="removeCat"></i>
               </span>
             </div>
-            <input v-if="allowEdit.categories" type="text" placeholder="Use comma (,) or 'Enter' to end or save a category." @input="monitorInput" @change="enterCat">
+            <input v-if="allowEdit.categories" type="text" placeholder="Use comma (,) or 'Enter' to end or save a category." @input="monitorInput" @change="enterCat" @keyup.esc.stop="toggleEdit('categories')" ref="categoriesInput">
             <div v-if="allowEdit.categories" class="cat-display">
               <span v-for="cat in notCat" class="tag edit">
                 {{ cat }}
@@ -223,7 +240,7 @@ Vue.component("single-bookmark", {
             <div class="section-title">Description <i class="fa fa-pencil action" @click="toggleEdit('description')"></i></div>
             <div class="desc-display" v-if="!allowEdit.description">{{ bookmark.description }}</div>
             <div class="desc-edit" v-else>
-              <textarea v-model="edit.description"></textarea>
+              <textarea v-model="edit.description" @keyup.esc.stop="reject('description')" ref="descriptionInput"></textarea>
               <i class="fa fa-check action" @click="accept('description')"></i>
               <i class="fa fa-times action" @click="reject('description')"></i>
             </div>
@@ -291,17 +308,22 @@ Vue.component("global-actions", {
       this.showMenu = true;
       Vue.nextTick(() => {
         window.addEventListener("click", this.closeMenu);
+        window.addEventListener("keyup", this.keyupListener);
       });
     },
     closeMenu: function () {
       this.showMenu = false;
       window.removeEventListener("click", this.closeMenu);
+      window.removeEventListener("keyup", this.keyupListener);
     },
     refresh: function () {
       this.$emit("refresh");
     },
     goHome: function () {
       window.open("../", "_self");
+    },
+    keyupListener: function (ev) {
+      if (ev.keyCode == 27) this.closeMenu() // ESC
     }
   },
   template: `
@@ -480,22 +502,26 @@ v_app = new Vue({
       });
     },
     showError: function (message) {
-      this.setMessage("Error", message);
+      this.setMessage("Error", message, []);
     },
     closeMessage: function () {
       this.messageTitle = "";
       this.message = "";
       this.messagePrompt = [];
+      window.removeEventListener("keyup", this.closeMessageByKey);
     },
     showText: function (m) {
-      this.setMessage(m.title, m.message);
+      this.setMessage(m.title, m.message, []);
     },
-    setMessage: function (title, message) {
+    setMessage: function (title, message, prompt) {
       this.messageTitle = title;
       this.message = message;
-      // setTimeout(() => {
-      //   if (this.message == message) this.message = "";
-      // }, 3000);
+      this.messagePrompt = prompt;
+      window.addEventListener("keyup", this.closeMessageByKey);
+    },
+    closeMessageByKey: function (ev) {
+      if (ev.keyCode == 27) this.closeMessage();
+      ev.preventDefault();
     },
     addCat: function (m) {
       let tbm = this.bookmarks.find(bm => bm.url == m.url);
@@ -532,17 +558,19 @@ v_app = new Vue({
       getFileId().then(updateFileContent);
     },
     removeBookmark: function (param) {
-      this.messageTitle = "Remove bookmark?";
-      this.message = "Do you want to remove bookmark " + param + "?";
-      this.messagePrompt = [{
-        text: "Remove",
-        click: () => {
-          this.bookmarks.splice(this.bookmarks.findIndex(bm => bm.url == param), 1);
-          getFileId().then(updateFileContent);
-        }
-      }, {
-        text: "Keep"
-      }]
+      this.setMessage(
+        "Remove bookmark?",
+        "Do you want to remove bookmark " + param + "?",
+        [{
+          text: "Remove",
+          click: () => {
+            this.bookmarks.splice(this.bookmarks.findIndex(bm => bm.url == param), 1);
+            getFileId().then(updateFileContent);
+          }
+        }, {
+          text: "Keep"
+        }]
+      );
     }
   }
 })
