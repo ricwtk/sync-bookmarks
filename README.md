@@ -14,3 +14,11 @@ Link to Chrome extension page
 
 ## Web
 Link to web app
+
+## Changelog
+
+### 2018 - 01 - 04
+
+Firefox extension (v. 1.1)
+
+- update UI for extension

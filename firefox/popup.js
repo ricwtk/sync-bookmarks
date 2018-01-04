@@ -4,7 +4,32 @@ const sortFeatureAll = ["Categories", "Title", "URL", "Saved date"];
 const sortFeatureAllKeys = ["categories", "title", "url", "savedDate"];
 
 Vue.component("a-mark", {
-  props: ["mark", "actions"],
+  props: ["mark", "actions", "allCat"],
+  data: function () {
+    return {
+      showDetails: false,
+      edit: {},
+      allowEdit: {
+        customTitle: false,
+        categories: false,
+        description: false
+      }
+    };
+  },
+  computed: {
+    sortedCat: function () {
+      return Array.from(this.mark.categories).sort((a,b) => a.localeCompare(b));
+    },
+    notCat: function () {
+      return this.allCat.filter(c => !this.mark.categories.includes(c)).sort((a,b) => a.localeCompare(b));
+    }
+  },
+  created: function () {
+    this.edit = {
+      customTitle: this.mark.customTitle,
+      description: this.mark.description
+    }
+  },
   methods: {
     clickText: function (el) {
       this.$emit("clicktext", el.target.textContent);
@@ -37,22 +62,117 @@ Vue.component("a-mark", {
            <span class="tag">file: URLs</span>`);
       }
     },
-    editBookmark: function () {
-      this.$emit("edit", this.mark);
-    }
+    toggleDetails: function () {
+      this.showDetails = !this.showDetails;
+    },
+    toggleEdit: function (key) {
+      this.allowEdit[key] = !this.allowEdit[key];
+      if (!this.allowEdit[key]) {
+        this.edit[key] = this.mark[key];
+      } else {
+        Vue.nextTick(() => {
+          this.$refs[key.toLowerCase() + "Input"].focus();
+        });
+      }
+    },
+    accept: function (key) {
+      this.$emit("change"+key.toLowerCase(), { url: this.mark.url, new: this.edit[key] });
+      this.allowEdit[key] = !this.allowEdit[key];
+    },
+    reject: function (key) {
+      this.edit[key] = this.mark[key];
+      this.allowEdit[key] = !this.allowEdit[key];
+    },
+    monitorInput: function (el) {
+      let catEntry = el.target.value;
+      if (catEntry[catEntry.length-1] == ",") {
+        let newCat = catEntry.slice(0, catEntry.length-1)
+        this.addCat(newCat);
+        el.target.value = "";
+      }
+    },
+    enterCat: function (el) {
+      let catEntry = el.target.value;
+      this.addCat(catEntry);
+      el.target.value = "";
+    },
+    addCat: function (newCat) {
+      this.$emit("addcat", { url: this.mark.url, newCat: newCat });
+      this.mark.categories.push(newCat);
+      this.mark.categories = this.mark.categories.filter((s,i,a) => a.indexOf(s) == i);
+    },
+    removeCat: function (el) {
+      this.$emit("removecat", { url: this.mark.url, removeCat: el.target.dataset.tagname });
+      let removeIdx = this.mark.categories.indexOf(el.target.dataset.tagname);
+      if (removeIdx > -1) this.mark.categories.splice(removeIdx, 1);
+    },
+    addExistingCat: function (el) {
+      this.addCat(el.target.dataset.tagname);
+    },
   },
   template: `
   <div class="mark-wrapper">
     <div class="a-mark">
-      <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
-      <div class="mark-desc">
-        <div class="mark-title" :title="mark.title" @click="clickText">{{ mark.customTitle ? mark.customTitle : mark.title }}</div>
-        <div class="mark-url" :title="mark.url" @click="clickText">{{ mark.url }}</div>
-        <div class="mark-actions">
+      <div class="mark-primary-title">
+        <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
+        <div class="mark-desc">
+          <div class="mark-title" :title="mark.title" @click="clickText">{{ mark.customTitle ? mark.customTitle : mark.title }}</div>
+          <div class="mark-url" :title="mark.url" @click="clickText">{{ mark.url }}</div>
+        </div>
+      </div>
+      <div class="mark-actions">
+        <div class="mark-actions-left">
           <div v-if="actions.includes('+')" class="mark-action fa fa-plus" title="bookmark this" @click="addBookmark"></div>
           <div v-if="actions.includes('-')" class="mark-action fa fa-minus" title="remove bookmark" @click="removeBookmark"></div>
           <div v-if="actions.includes('o')" class="mark-action fa fa-external-link-square" title="open link" @click="openBookmark"></div>
-          <div v-if="actions.includes('e')" class="mark-action fa fa-pencil-square" title="edit" @click="editBookmark"></div>
+        </div>
+        <div class="mark-actions-right">
+          <div v-if="actions.includes('e')" class="mark-action fa fa-angle-down" title="show details" @click="toggleDetails"></div>
+        </div>
+      </div>
+      <div class="mark-details" v-if="showDetails && actions.includes('e')">
+        <div>
+          <div class="section-title">Default title</div>
+          <div class="text-display">&#8203;{{ mark.title }}</div>
+        </div>
+        <div>
+          <div class="section-title">URL</div>
+          <div class="text-display">&#8203;{{ mark.url }}</div>
+        </div>
+        <div>
+          <div class="section-title">Title<i class="fa fa-pencil action" @click="toggleEdit('customTitle')"></i></div>
+          <div class="text-display" v-if="!allowEdit.customTitle">&#8203;{{ mark.customTitle }}</div>
+          <div class="text-edit" v-else>
+            <input type="text" v-model="edit.customTitle" @keyup.esc.stop="reject('customTitle')" @keyup.enter.stop="accept('customTitle')" ref="customtitleInput">
+            <i class="fa fa-check action" @click="accept('customTitle')"></i>
+            <i class="fa fa-times action" @click="reject('customTitle')"></i>
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Categories <i class="fa fa-pencil action" @click="toggleEdit('categories')"></i></div>
+          <div class="cat-display">
+            &#8203;
+            <span v-for="cat in sortedCat" :class="{ tag: true, edit: allowEdit.categories }">
+              {{ cat }}
+              <i v-if="allowEdit.categories" class="fa fa-times-circle" :data-tagname="cat" @click="removeCat"></i>
+            </span>
+          </div>
+          <input v-if="allowEdit.categories" type="text" placeholder="Use comma (,) or 'Enter' to end or save a category." @input="monitorInput" @change="enterCat" @keyup.esc.stop="toggleEdit('categories')" ref="categoriesInput">
+          <div v-if="allowEdit.categories" class="cat-display">
+            <span v-for="cat in notCat" class="tag edit">
+              {{ cat }}
+              <i class="fa fa-plus-circle" :data-tagname="cat" @click="addExistingCat"></i>
+            </span>
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Description <i class="fa fa-pencil action" @click="toggleEdit('description')"></i></div>
+          <div class="desc-display" v-if="!allowEdit.description">{{ mark.description }}</div>
+          <div class="desc-edit" v-else>
+            <textarea v-model="edit.description" @keyup.esc.stop="reject('description')" ref="descriptionInput"></textarea>
+            <i class="fa fa-check action" @click="accept('description')"></i>
+            <i class="fa fa-times action" @click="reject('description')"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -154,6 +274,9 @@ Vue.component("content-list", {
       let sortFeature = sortFeatureAllKeys[this.sortFeature];
       if (sortFeature == "categories") return "Uncategorised";
       else if (sortFeature == "title") return "No Name";
+    },
+    allCat: function () {
+      return Array.prototype.concat(...this.fullList.map(bm => bm.categories)).filter((s,i,a) => a.indexOf(s) == i).sort((a,b) => a.localeCompare(b));
     }
   },
   methods: {
@@ -166,8 +289,17 @@ Vue.component("content-list", {
     showError: function (err) {
       this.$emit("error", err);
     },
-    clickEdit: function (mark) {
-      this.$emit("edit", mark);
+    changeCustomTitle: function (m) {
+      this.$emit("changecustomtitle", m);
+    },
+    changeDescription: function (m) {
+      this.$emit("changedescription", m);
+    },
+    addCat: function (m) {
+      this.$emit("addcat", m);
+    },
+    removeCat: function (m) {
+      this.$emit("removecat", m);
     }
   },
   template: `
@@ -179,115 +311,17 @@ Vue.component("content-list", {
     <template v-for="section in rearrangedList">
       <div class="subheadline">{{ section.sectionName ? section.sectionName : noSection }}</div>
       <a-mark v-for="x in section.bookmarks" :mark="x" actions="-oe"
+        :all-cat="allCat"
         @remove="removeBookmark(x)"
         @clicktext="clickText"
         @error="showError"
-        @edit="clickEdit">
+        @changecustomtitle="changeCustomTitle"
+        @changedescription="changeDescription"
+        @addcat="addCat"
+        @removecat="removeCat">
       </a-mark>
     </template>
   </div>
-  `
-});
-
-Vue.component("bookmark-edit", {
-  props: ["mark", "allCat"],
-  data: function () {
-    return {
-      altStyle: {}
-    }
-  },
-  mounted: function () {
-    if (this.$el.clientHeight > this.$el.firstChild.clientHeight + 20) {
-      this.altStyle = {
-        "displaybookmarks": "flex",
-        "align-items": "center"
-      };
-    }
-  },
-  computed: {
-    notCat: function () {
-      return this.allCat.filter(c => !this.mark.categories.includes(c));
-    }
-  },
-  methods: {
-    hide: function (el) {
-      if (el.target == this.$el) this.$emit("hide");
-    },
-    clickText: function (el) {
-      this.$emit("clicktext", el.target.textContent);
-    },
-    monitorInput: function (el) {
-      let catEntry = el.target.value;
-      if (catEntry[catEntry.length-1] == ",") {
-        let newCat = catEntry.slice(0, catEntry.length-1)
-        this.addCat(newCat);
-        el.target.value = "";
-      }
-    },
-    enterCat: function (el) {
-      let catEntry = el.target.value;
-      this.addCat(catEntry);
-      el.target.value = "";
-    },
-    addCat: function (newCat) {
-      this.$emit("addcat", { url: this.mark.url, newCat: newCat });
-      this.mark.categories.push(newCat);
-      this.mark.categories = this.mark.categories.filter((s,i,a) => a.indexOf(s) == i);
-    },
-    removeCat: function (el) {
-      this.$emit("removecat", { url: this.mark.url, removeCat: el.target.dataset.tagname });
-      let removeIdx = this.mark.categories.indexOf(el.target.dataset.tagname);
-      if (removeIdx > -1) this.mark.categories.splice(removeIdx, 1);
-    },
-    addOldCat: function (el) {
-      this.addCat(el.target.dataset.tagname);
-    }
-  },
-  watch: {
-    "mark.customTitle": function () {
-      this.$emit("changecustomtitle", { url: this.mark.url, customTitle: this.mark.customTitle });
-    },
-    "mark.description": function () {
-      this.$emit("changedescription", { url: this.mark.url, description: this.mark.description });
-    }
-  },
-  template: `
-    <div class="bm-edit-wrapper" @click="hide" :style="altStyle">
-      <div class="bm-edit">
-        <div class="a-mark">
-          <img class="mark-favicon" :src="mark.favIconUrl" v-if="mark.favIconUrl">
-          <div class="mark-desc">
-            <div class="mark-title" :title="mark.title" @click="clickText">{{ mark.title }}</div>
-            <div class="mark-url" :title="mark.url" @click="clickText">{{ mark.url }}</div>
-          </div>
-        </div>
-        <div class="title-edit">
-          Title: <input type="text" v-model="mark.customTitle">
-        </div>
-        <div class="cat-edit">
-          <div class="cat-display">
-            Categories:
-            <span v-for="cat in mark.categories" class="tag">
-              {{ cat }}
-              <span class="tag-sep"></span>
-              <i class="tag-action fa fa-times" @click="removeCat" :data-tagname="cat"></i>
-            </span>
-          </div>
-          <div class="cat-input"><i class="fa fa-plus-circle"></i><input type="text" @input="monitorInput" @change="enterCat"></div>
-          <div class="more-cat-display">
-            <span v-for="cat in notCat" class="tag">
-              {{ cat }}
-              <span class="tag-sep"></span>
-              <i class="tag-action fa fa-plus" @click="addOldCat" :data-tagname="cat"></i>
-            </span>
-          </div>
-        </div>
-        <div class="desc-edit">
-          Description:
-          <textarea v-model="mark.description" rows="5">
-        </div>
-      </div>
-    </div>
   `
 });
 
@@ -332,8 +366,6 @@ new Vue({
     bookmarks: [],
     showPopup: false,
     popupText: "",
-    showEdit: false,
-    bookmarkToEdit: {},
     useLocal: true,
     remoteAccount: ""
   },
@@ -371,10 +403,6 @@ new Vue({
     },
     hidePop: function (el) {
       if (el.target != this.$refs.popupText) this.showPopup = false;
-    },
-    popEdit: function (mark) {
-      this.showEdit = true;
-      this.bookmarkToEdit = mark;
     },
     addCat: function (param) {
       dataPort.postMessage({

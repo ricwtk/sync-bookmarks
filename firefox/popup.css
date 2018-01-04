@@ -44,25 +44,33 @@ body {
 
 .mark-wrapper {
   margin: 10px;
-  padding: 5px 10px;
-  box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.12);
+  /* padding: 5px 10px; */
+  border: 1px solid #ddd;
+  border-radius: 3px;
 }
 .a-mark {
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  /* align-items: center; */
   max-width: 300px;
 }
+.mark-primary-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 8px 8px 8px;
+}
 .mark-favicon {
-  margin-right: 5px;
+  margin-right: 3px;
   object-fit: contain;
-  width: 50px;
+  width: 30px;
 }
 .mark-desc {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   flex-grow: 1;
+  align-items: flex-start;
 }
 .mark-title {
   font-weight: bold;
@@ -77,23 +85,116 @@ body {
 }
 .mark-actions {
   display: flex;
-  padding: 5px;
+  /* justify-content: space-between; */
+}
+.mark-actions > * {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.mark-actions-left {
+  flex-grow: 1;
 }
 .mark-action {
   cursor: pointer;
   color: #757575;
-  padding: 10px;
+  margin: 4px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-grow: 1;
-  text-align: center;
-  border-radius: 3px;
+}
+.mark-action:not(:first-child) {
+  margin-left: 0px;
 }
 .mark-action:hover {
   background-color: #eee;
 }
+.mark-details {
+  padding: 8px 8px 12px 8px;
+}
+.mark-details > *:not(:first-child) {
+  margin-top: 8px;
+}
+.mark-details .section-title {
+  font-weight: bolder;
+  font-size:80%;
+}
+.mark-details .text-display {
+  font-weight: lighter;
+}
+.mark-details .action {
+  opacity: 0.25;
+  margin-left: 3px;
+}
+.mark-details .action:hover { opacity: 1; }
+.mark-details .text-edit {
+  display: flex;
+  align-items: center;
+}
+.mark-details input {
+  flex-grow: 1;
+}
+.mark-details .desc-display {
+  word-wrap: wrap;
+  width: 100%;
+  height: 5em;
+}
+.mark-details .desc-edit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.mark-details textarea {
+  height: 6em;
+  flex-grow: 1;
+}
+textarea, input[type="text"] {
+  padding: 5px 0;
+  background-color: rgba(0,0,0,0);
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+textarea:focus, input[type="text"]:focus {
+  border-bottom: 1px solid #CDDC39;
+}
+textarea {
+  resize: none;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #eee;
+  padding: 0px 6px;
+  height: 25px;
+  margin: 2px;
+  border-radius: 12px;
+}
+.tag.edit {
+  padding: 0px 2px 0px 6px;
+}
+.tag .fa {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  width: 15px;
+  height: 15px;
+  margin-left: 2px;
+}
+.tag:hover {
+  background-color: #888;
+  color: #fff;
+}
+.tag:hover .fa {
+  color: #fff;
+}
 .popup-text {
   z-index: 999;
 }
-.popup-text, .bm-edit-wrapper {
+.popup-text {
   position: fixed;
   left: 0;
   top: 0;
@@ -107,7 +208,7 @@ body {
   flex-direction: column;
   justify-content: center;
 }
-.popup-text > div, .bm-edit {
+.popup-text > div {
   background-color: white;
   margin: 20px;
   padding: 10px;
@@ -123,73 +224,6 @@ body {
   justify-content: center;
 }
 .popup-text .tag { padding-right: 10px!important; }
-.bm-edit {
-  flex-grow: 1;
-}
-.bm-edit > .a-mark {
-  padding: 10px 0;
-  border-bottom: 1px solid #ddd;
-}
-.title-edit, .cat-edit, .desc-edit {
-  padding: 10px 0;
-  display: flex;
-}
-.title-edit {
-  align-items: center;
-}
-.cat-edit, .desc-edit {
-  flex-direction: column;
-}
-.cat-display, .more-cat-display {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.cat-input {
-  display: flex;
-  align-items: center;
-  padding-top: 10px;
-}
-.title-edit input, .cat-input input, .desc-edit textarea {
-  margin-left: 5px;
-  flex-grow: 1;
-  padding: 5px 0;
-  background-color: rgba(0,0,0,0);
-  border: 0;
-  border-bottom: 1px solid #ddd;
-}
-.title-edit input:focus, .cat-input input:focus {
-  border-bottom: 1px solid #CDDC39;
-}
-.desc-edit textarea {
-  resize: none;
-}
-.desc-edit textarea:focus {
-  border-bottom: 1px solid #CDDC39;
-}
-.tag {
-  background-color: #eee;
-  padding: 0px 5px 0px 10px;
-  height: 28px;
-  border-radius: 14px;
-  white-space: nowrap;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-}
-.tag-sep {
-  width: 4px;
-}
-.tag-action {
-  color: #eee;
-  background-color: #ccc;
-  border-radius: 24px;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .misc-section {
   display: flex;
   flex-direction: column;
