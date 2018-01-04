@@ -80,6 +80,22 @@ function updateFileContent(fileId) {
   });
 }
 
+var keyupListeners = [];
+function listenToKey(ev) {
+  if (keyupListeners.length > 0) keyupListeners[0].listener(ev);
+}
+function removeKeyupListener(identifier) {
+  let removeIdx = keyupListeners.findIndex(kl => kl.identifier == identifier);
+  keyupListeners.splice(removeIdx, 1);
+}
+function addKeyupListener(identifier, listener) {
+  keyupListeners.splice(0, 0, {
+    identifier: identifier,
+    listener: listener
+  });
+}
+window.addEventListener("keyup", listenToKey);
+
 Vue.component("single-bookmark", {
   props: ["bookmark", "allCategories", "arrangement"],
   data: function () {
@@ -112,17 +128,16 @@ Vue.component("single-bookmark", {
       this.showDetails = !this.showDetails;
       if (this.showDetails) {
         window.addEventListener("click", this.clickListener);
-        window.addEventListener("keyup", this.keyupListener);
+        addKeyupListener("details", (ev) => {
+          if (ev.keyCode == 27) this.toggleDetails();
+        });
       } else {
         window.removeEventListener("click", this.clickListener);
-        window.removeEventListener("keyup", this.keyupListener);
+        removeKeyupListener("details");
       }
     },
     clickListener: function (ev) {
       if (!this.$el.contains(ev.target)) this.toggleDetails();
-    },
-    keyupListener: function (ev) {
-      if (ev.keyCode == 27) this.toggleDetails();
     },
     openBookmark: function () {
       try {
@@ -308,22 +323,21 @@ Vue.component("global-actions", {
       this.showMenu = true;
       Vue.nextTick(() => {
         window.addEventListener("click", this.closeMenu);
-        window.addEventListener("keyup", this.keyupListener);
+        addKeyupListener("global-actions", (ev) => {
+          if (ev.keyCode == 27) this.closeMenu();
+        });
       });
     },
     closeMenu: function () {
       this.showMenu = false;
       window.removeEventListener("click", this.closeMenu);
-      window.removeEventListener("keyup", this.keyupListener);
+      removeKeyupListener("global-actions");
     },
     refresh: function () {
       this.$emit("refresh");
     },
     goHome: function () {
       window.open("../", "_self");
-    },
-    keyupListener: function (ev) {
-      if (ev.keyCode == 27) this.closeMenu() // ESC
     }
   },
   template: `
@@ -508,7 +522,7 @@ v_app = new Vue({
       this.messageTitle = "";
       this.message = "";
       this.messagePrompt = [];
-      window.removeEventListener("keyup", this.closeMessageByKey);
+      removeKeyupListener("message");
     },
     showText: function (m) {
       this.setMessage(m.title, m.message, []);
@@ -517,11 +531,12 @@ v_app = new Vue({
       this.messageTitle = title;
       this.message = message;
       this.messagePrompt = prompt;
-      window.addEventListener("keyup", this.closeMessageByKey);
+      addKeyupListener("message", (ev) => {
+        if (ev.keyCode == 27) this.closeMessage();
+      })
     },
     closeMessageByKey: function (ev) {
       if (ev.keyCode == 27) this.closeMessage();
-      ev.preventDefault();
     },
     addCat: function (m) {
       let tbm = this.bookmarks.find(bm => bm.url == m.url);
