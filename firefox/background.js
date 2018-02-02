@@ -4,10 +4,10 @@ const CLIENT_ID = "903494531768-84hjq7n2u76kvogs6cesll2nms4eo93h.apps.googleuser
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 const SCOPES = ['https://www.googleapis.com/auth/drive.appfolder', 'email'];
 const AUTH_URL =
-`https://accounts.google.com/o/oauth2/auth
-?client_id=${CLIENT_ID}
-&response_type=token
-&redirect_uri=${encodeURIComponent(REDIRECT_URL)}
+`https://accounts.google.com/o/oauth2/auth\
+?client_id=${CLIENT_ID}\
+&response_type=token\
+&redirect_uri=${encodeURIComponent(REDIRECT_URL)}\
 &scope=${encodeURIComponent(SCOPES.join(' '))}`;
 var ACCESS_TOKEN = "";
 

@@ -17,6 +17,12 @@ Sync Bookmarks saves the bookmarks locally or remotely in your Google Drive. You
 
 ## Changelog
 
+### 2018 - 02 - 02
+
+Firefox extension (v. 1.2)
+
+- fix bug which disabled login to Google account from Firefox extension
+
 ### 2018 - 01 - 04
 
 Chrome & Firefox extension (v. 1.1)
