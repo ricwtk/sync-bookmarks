@@ -251,3 +251,7 @@ textarea {
   background-color: #CDDC39!important;
   color: white;
 }
+
+.hide {
+  display: none ! important;
+}

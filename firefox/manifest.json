@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "1.2",
+  "version": "1.3",
   "name": "Sync Bookmarks",
   "icons": {
     "48": "icons/icon.png",
@@ -24,7 +24,6 @@
     "*://accounts.google.com/*",
     "*://apis.google.com/*"
   ],
-  "content_security_policy": "script-src 'self' https://apis.google.com/ 'unsafe-eval'; object-src 'self';",
   "applications": {
     "gecko": {
       "id": "sync-bookmarks@ricwtk",
