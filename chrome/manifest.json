@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "1.10",
+  "version": "1.20",
   "name": "Sync Bookmarks",
   "icons": {
     "48": "icons/icon.png",
@@ -24,7 +24,6 @@
     "*://accounts.google.com/*",
     "*://apis.google.com/*"
   ],
-  "content_security_policy": "script-src 'self' https://apis.google.com/ 'unsafe-eval'; object-src 'self';",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoAMb25Phbx6WVIm/a+RIpMdYVMrzaCbL2N6q2MjLlobu031ior10xZGe3gTG6GG1wFDivLFJcuNkVoaqWyFz5xXpisFfbrgOhv3nvF+xo/AnQGV97aDw0qBm/NUv+QeL7LC4ABcpWD1GhTsINO630kkC6ePtnolp4p4nRWcVkYRuqBE8Irk7Q67sVutTZ34Goy0X9nhk/AWQ8ikgFsvGvGIt5BiSWSiKizaktG+YRRAOSWS8ELwbPDCneFht0GXAJ/gFpdeIuCCtVh5hJ4v2nm5QqGaTjYcMPyKmRNKB7Xt9+DkcTfP6wuvdEJ2e3N4LogthqEC0yMiVxWXQr9yoGwIDAQAB",
   "oauth2": {
     "client_id": "903494531768-18mrnp3b725foc9v8rt0bmdd5mqat6e4.apps.googleusercontent.com",

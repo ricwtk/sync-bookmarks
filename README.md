@@ -19,7 +19,7 @@ Sync Bookmarks saves the bookmarks locally or remotely in your Google Drive. You
 
 ### 2018 - 04 - 09
 
-Firefox extension (v.1.4)
+Firefox extension (v.1.4) & Chrome extension (v.1.20)
 
 - use Vue.runtime.js library to use reactivity but also avoid using 'unsafe-eval' in content security policy
 
