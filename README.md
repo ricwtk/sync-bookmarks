@@ -23,7 +23,7 @@ Firefox extension (v.1.4) & Chrome extension (v.1.20)
 
 - use Vue.runtime.js library to use reactivity but also avoid using 'unsafe-eval' in content security policy
 
-### 
+### 2018 - 03 - 08
 
 Firefox extension (v. 1.3)
 
