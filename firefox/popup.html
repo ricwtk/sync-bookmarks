@@ -4,43 +4,11 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="popup.css">
-    <script src="js/vue.min.js"></script>
+    <script src="js/vue.runtime.min.js"></script>
   </head>
 
   <body>
-    <div id="app">
-      <a-mark :mark="currentTab" :actions="currentTabAction"
-        @add="addBookmark"
-        @remove="removeBookmark"
-        @clicktext="popText"></a-mark>
-      <div class="headline"><i class="fa fa-bookmark"></i><div class="hsep"></div>Bookmarks</div>
-      <sort-by
-        :sort-feature="sortFeature"
-        :sort-order="sortOrder"
-        @changesortfeature="changeSortFeature"
-        @changesortorder="changeSortOrder">
-      </sort-by>
-      <content-list
-        :sort-feature="sortFeature"
-        :sort-order="sortOrder"
-        :full-list="bookmarks"
-        @remove="removeBookmark"
-        @clicktext="popText"
-        @error="popText"
-        @changecustomtitle="changeCustomTitle"
-        @changedescription="changeDescription"
-        @addcat="addCat"
-        @removecat="removeCat">
-      </content-list>
-      <div class="popup-text" v-if="showPopup" @click="hidePop">
-        <div ref="popupText" v-html="popupText"></div>
-      </div>
-      <misc-section
-        :use-local="useLocal"
-        :remote-account="remoteAccount"
-        @signinout="signInOut">
-      </misc-section>
-    </div>
+    <div id="app"></div>
 
     <script src="popup.js"></script>
   </body>
