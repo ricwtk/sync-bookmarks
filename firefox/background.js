@@ -247,6 +247,7 @@ function syncToStorage(data) {
 
 function getData(interactive) {
   if (useLocal) {
+    ACCESS_TOKEN = "";
     return browser.storage.local.get("sync-bookmarks-data").then(res => {
       let resContent = res["sync-bookmarks-data"];
       if (resContent) {
@@ -275,7 +276,8 @@ function getData(interactive) {
         }).then((res) => {
           console.log("Logged in to Google");
           return res;
-        }).then(afterGoogleLogin).then(() => {
+        }).then(afterGoogleLogin)
+        .then(() => {
           resolve()
         }, (err) => {
           console.log("Not logged in to Google");
