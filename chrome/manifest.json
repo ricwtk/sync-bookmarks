@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "1.20",
+  "version": "1.30",
   "name": "Sync Bookmarks",
   "icons": {
     "48": "icons/icon.png",
