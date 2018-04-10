@@ -153,67 +153,101 @@ function connected(p) {
     console.log("From popup.js", m);
     let retM = {};
     let mKeys = Object.keys(m);
-    if (mKeys.includes("refresh")) return onLocalModified(false);
-    if (mKeys.includes("setLocal")) return updateLocal(m.setLocal, true);
-    if (mKeys.includes("add")) bookmarks.push(m.add);
-    if (mKeys.includes("remove")) bookmarks.splice(bookmarks.findIndex(bm => bm.url == m.remove), 1);
-    if (mKeys.includes("setSortFeature")) sortFeature = m.setSortFeature;
-    if (mKeys.includes("setSortOrder")) sortOrder = m.setSortOrder;
-    if (mKeys.includes("addCat")) {
-      let tbm = bookmarks.find(bm => bm.url == m.addCat.url);
-      tbm.categories.push(m.addCat.newCat);
-      tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
+    if (mKeys.includes("refresh")) {
+      sendToDataPort({
+        bookmarks: bookmarks,
+        sortFeature: sortFeature,
+        sortOrder: sortOrder,
+        useLocal: useLocal,
+        remoteAccount: remoteAccount
+      })
+      return getData(false).then(sendToDataPort);
     }
-    if (mKeys.includes("removeCat")) {
-      let tbm = bookmarks.find(bm => bm.url == m.removeCat.url);
-      let removeIdx = tbm.categories.indexOf(m.removeCat.removeCat);
-      if (removeIdx > -1) tbm.categories.splice(removeIdx, 1);
+    if (mKeys.includes("setLocal")) return updateLocal(m.setLocal, true).then(() => getData(false)).then(sendToDataPort);
+    if (["setSortFeature", "setSortOrder"].some( el => mKeys.includes(el) )) {
+      if (mKeys.includes("setSortFeature")) sortFeature = m.setSortFeature;
+      if (mKeys.includes("setSortOrder")) sortOrder = m.setSortOrder;
+      syncToStorage({
+        bookmarks: bookmarks,
+        sortFeature: sortFeature,
+        sortOrder: sortOrder
+      })
     }
-    if (mKeys.includes("changeCustomTitle")) {
-      let tbm = bookmarks.find(bm => bm.url == m.changeCustomTitle.url);
-      tbm.customTitle = m.changeCustomTitle.new;
-    }
-    if (mKeys.includes("changeDescription")) {
-      let tbm = bookmarks.find(bm => bm.url == m.changeDescription.url);
-      tbm.description = m.changeDescription.new;
-    }
-    dataPort.postMessage({
-      bookmarks: bookmarks,
-      sortFeature: sortFeature,
-      sortOrder: sortOrder,
-      useLocal: useLocal,
-      remoteAccount: remoteAccount
-    });
-    if (useLocal) {
-      browser.storage.local.set({
-        "sync-bookmarks-data": {
-          bookmarks: bookmarks,
-          sortFeature: sortFeature,
-          sortOrder: sortOrder
-        }
-      });
-    } else {
-      gDriveGetFileId()
-        .then(file => gDriveSetContent(file, {
-          bookmarks: bookmarks,
-          sortFeature: sortFeature,
-          sortOrder: sortOrder
-        }));
-    }
+    if (["add", "remove", "addCat", "removeCat", "changeCustomTitle", "changeDescription"]
+      .some( el => mKeys.includes(el) )) {
+        return getData(false).then(d => {
+          if (mKeys.includes("add")) {
+            if (d.bookmarks.findIndex(bm => bm.url == m.add.url) < 0) 
+              d.bookmarks.push(m.add);
+          }
+          if (mKeys.includes("remove")) d.bookmarks.splice(d.bookmarks.findIndex(bm => bm.url == m.remove), 1);
+          if (mKeys.includes("addCat")) {
+            let tbm = d.bookmarks.find(bm => bm.url == m.addCat.url);
+            tbm.categories.push(m.addCat.newCat);
+            tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
+          }
+          if (mKeys.includes("removeCat")) {
+            let tbm = d.bookmarks.find(bm => bm.url == m.removeCat.url);
+            let removeIdx = tbm.categories.indexOf(m.removeCat.removeCat);
+            if (removeIdx > -1) tbm.categories.splice(removeIdx, 1);
+          }
+          if (mKeys.includes("changeCustomTitle")) {
+            let tbm = d.bookmarks.find(bm => bm.url == m.changeCustomTitle.url);
+            tbm.customTitle = m.changeCustomTitle.new;
+          }
+          if (mKeys.includes("changeDescription")) {
+            let tbm = d.bookmarks.find(bm => bm.url == m.changeDescription.url);
+            tbm.description = m.changeDescription.new;
+          }
+          return {
+            bookmarks: d.bookmarks,
+            sortFeature: d.sortFeature,
+            sortOrder: d.sortOrder,
+            useLocal: d.useLocal
+          }
+        }).then(d => {
+          bookmarks = d.bookmarks;
+          sortFeature = d.sortFeature;
+          sortOrder = d.sortOrder;
+          syncToStorage({
+            bookmarks: d.bookmarks,
+            sortFeature: d.sortFeature,
+            sortOrder: d.sortOrder
+          });
+          sendToDataPort(d);
+        });
+      }
   });
 }
 
 function updateLocal(newLocal, interactive) {
   useLocal = newLocal;
-  browser.storage.local.set({
+  return browser.storage.local.set({
     "sync-bookmarks-local-prefs": { "useLocal": useLocal }
   });
-  onLocalModified(interactive);
 }
 
-function onLocalModified(interactive) {
+function sendToDataPort(data) {
+  try {
+    if (dataPort) dataPort.postMessage(data);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function syncToStorage(data) {
   if (useLocal) {
-    browser.storage.local.get("sync-bookmarks-data").then(res => {
+    return browser.storage.local.set({
+      "sync-bookmarks-data": data
+    });
+  } else {
+    gDriveGetFileId().then(file => gDriveSetContent(file, data));
+  }
+}
+
+function getData(interactive) {
+  if (useLocal) {
+    return browser.storage.local.get("sync-bookmarks-data").then(res => {
       let resContent = res["sync-bookmarks-data"];
       if (resContent) {
         let rcKeys = Object.keys(resContent);
@@ -225,40 +259,49 @@ function onLocalModified(interactive) {
         sortFeature = 0;
         sortOrder = false;
       }
-      if (dataPort) dataPort.postMessage({
+      return {
         bookmarks: bookmarks,
         sortFeature: sortFeature,
         sortOrder: sortOrder,
         useLocal: useLocal
-      });
+      }
     });
   } else {
-    browser.identity.launchWebAuthFlow({
-      interactive: interactive,
-      url: AUTH_URL
-    }).then((res) => {
-      console.log("Logged in to Google");
-      afterGoogleLogin(res)
-        .then(gDriveGetFileId)
-        .then(gDriveGetContent)
-        .then(resp => {
-          console.log(resp);
-          let rKeys = Object.keys(resp);
-          bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
-          sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
-          sortOrder = rKeys.includes("sortOrder") ? resp.sortOrder : false;
-          if (dataPort) dataPort.postMessage({
-            bookmarks: bookmarks,
-            sortFeature: sortFeature,
-            sortOrder: sortOrder,
-            useLocal: useLocal,
-            remoteAccount: remoteAccount
-          });
-          return resp;
+    return new Promise((resolve, reject) => {
+      if (!ACCESS_TOKEN) {
+        browser.identity.launchWebAuthFlow({
+          interactive: interactive,
+          url: AUTH_URL
+        }).then((res) => {
+          console.log("Logged in to Google");
+          return res;
+        }).then(afterGoogleLogin).then(() => {
+          resolve()
+        }, (err) => {
+          console.log("Not logged in to Google");
+          updateLocal(true, interactive).then(() => getData(false)).then(sendToDataPort);
         });
-    }, (res) => {
-      console.log("Not logged in to Google");
-      updateLocal(true, interactive);
+      } else {
+        resolve();
+      }
+    }).then(gDriveGetFileId)
+    .then(gDriveGetContent)
+    .then(resp => {
+      console.log(resp);
+      let rKeys = Object.keys(resp);
+      bookmarks = rKeys.includes("bookmarks") ? resp.bookmarks : [];
+      sortFeature = rKeys.includes("sortFeature") ? resp.sortFeature : 0;
+      sortOrder = rKeys.includes("sortOrder") ? resp.sortOrder : false;
+      return {
+        bookmarks: bookmarks,
+        sortFeature: sortFeature,
+        sortOrder: sortOrder,
+        useLocal: useLocal,
+        remoteAccount: remoteAccount
+      }
+    }, (err) => {
+      ACCESS_TOKEN = "";
+      return getData(interactive);
     });
   }
 }
@@ -270,5 +313,5 @@ browser.storage.local.get("sync-bookmarks-local-prefs").then(res => {
   if (resContent)
     useLocal = Object.keys(resContent).includes("useLocal") ? resContent["useLocal"] : useLocal;
   console.log("useLocal", useLocal);
-  onLocalModified(false);
+  getData(false).then(sendToDataPort);
 });

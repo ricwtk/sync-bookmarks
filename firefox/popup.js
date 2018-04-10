@@ -739,11 +739,13 @@ new Vue({
   },
   methods: {
     addBookmark: function (bookmark) {
+      this.bookmarks.push(bookmark);
       dataPort.postMessage({
         add: bookmark
       });
     },
     removeBookmark: function (url) {
+      this.bookmarks.splice(this.bookmarks.findIndex(bm => bm.url == url), 1)
       dataPort.postMessage({
         remove: url
       });
@@ -764,21 +766,31 @@ new Vue({
       if (el.target != this.$refs.popupText) this.showPopup = false;
     },
     addCat: function (param) {
+      let tbm = this.bookmarks.find(bm => bm.url == param.url);
+      tbm.categories.push(param.newCat);
+      tbm.categories = tbm.categories.filter((s,i,a) => a.indexOf(s) == i);
       dataPort.postMessage({
         addCat: param
       });
     },
     removeCat: function (param) {
+      let tbm = this.bookmarks.find(bm => bm.url == param.url);
+      let removeIdx = tbm.categories.indexOf(param.removeCat);
+      if (removeIdx > -1) tbm.categories.splice(removeIdx, 1);
       dataPort.postMessage({
         removeCat: param
       });
     },
     changeCustomTitle: function (param) {
+      let tbm = this.bookmarks.find(bm => bm.url == param.url);
+      tbm.customTitle = param.new;
       dataPort.postMessage({
         changeCustomTitle: param
       });
     },
     changeDescription: function (param) {
+      let tbm = this.bookmarks.find(bm => bm.url == param.url);
+      tbm.description = param.new;
       dataPort.postMessage({
         changeDescription: param
       });
