@@ -143,13 +143,23 @@ function connected(p) {
     console.log("From popup.js", m);
     let retM = {};
     let mKeys = Object.keys(m);
+    if (mKeys.includes("init")) {
+      return sendToDataPort({
+        bookmarks: bookmarks,
+        sortFeature: sortFeature,
+        sortOrder: sortOrder,
+        useLocal: useLocal,
+        remoteAccount: remoteAccount
+      });
+    }
     if (mKeys.includes("refresh")) {
       sendToDataPort({
         bookmarks: bookmarks,
         sortFeature: sortFeature,
         sortOrder: sortOrder,
         useLocal: useLocal,
-        remoteAccount: remoteAccount
+        remoteAccount: remoteAccount,
+        refresh: true
       })
       return getData(false).then(sendToDataPort);
     }

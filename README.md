@@ -17,6 +17,12 @@ Sync Bookmarks saves the bookmarks locally or remotely in your Google Drive. You
 
 ## Changelog
 
+### 2018 - 04 - 11
+
+Firefox extension (v.1.6) & Chrome extension (v.1.40)
+
+- add refresh button instead of automatically refresh when popup opened to avoid unexpected change of displayed content list
+
 ### 2018 - 04 - 10
 
 Firefox extension (v.1.5) & Chrome extension (v.1.30)

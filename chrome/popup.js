@@ -458,7 +458,7 @@ Vue.component("a-mark", {
 });
 
 Vue.component("sort-by", {
-  props: ["sortFeature", "sortOrder"],
+  props: ["sortFeature", "sortOrder", "contentLoading"],
   computed: {
     sortFeatureDisplay: function() {
       return sortFeatureAll[this.sortFeature];
@@ -479,10 +479,22 @@ Vue.component("sort-by", {
     },
     changeSortOrder: function () {
       this.$emit("changesortorder");
+    },
+    refreshContent: function () {
+      this.$emit("refreshcontent");
     }
   },
   render: function (createElement) {
     return createElement("div", { attrs: { id: "sort-by" } }, [
+      createElement("div", { 
+        class: {
+          fa: true,
+          "fa-refresh": true,
+          "fa-spin": this.contentLoading
+        }, 
+        on: { click: this.refreshContent } 
+      }),
+      createElement("div", { class: "flex-fill" }),
       "Sort by:",
       createElement("div", { attrs: { class: "hsep" } }),
       createElement("div", { 
@@ -499,6 +511,8 @@ Vue.component("sort-by", {
   },
   // template: `
   // <div id="sort-by">
+  //   <div class="fa fa-refresh"></div>
+  //   <div class="flex-fill"></div>
   //   Sort by:
   //   <div class="hsep"></div>
   //   <div id="sort-feature" @click="changeSortFeature">{{ sortFeatureDisplay }}</div>
@@ -726,7 +740,8 @@ new Vue({
     showPopup: false,
     popupText: "",
     useLocal: true,
-    remoteAccount: ""
+    remoteAccount: "",
+    contentLoading: false
   },
   computed: {
     currentTabAction: function () {
@@ -757,6 +772,10 @@ new Vue({
     changeSortOrder: function () {
       this.sortOrder = !this.sortOrder;
       dataPort.postMessage({ setSortOrder: this.sortOrder });
+    },
+    refreshContent: function () {
+      this.contentLoading = true;
+      dataPort.postMessage({ refresh: true });
     },
     popText: function (text) {
       this.showPopup = true;
@@ -817,10 +836,12 @@ new Vue({
       if (mKeys.includes("sortOrder")) this.sortOrder = m.sortOrder;
       if (mKeys.includes("useLocal")) this.useLocal = m.useLocal;
       if (mKeys.includes("remoteAccount")) this.remoteAccount = m.remoteAccount;
+      if (mKeys.includes("refresh")) setTimeout(() => { this.contentLoading = false; }, 1000);
     });
 
-    dataPort.postMessage({});
-    dataPort.postMessage({ refresh: true });
+    // dataPort.postMessage({});
+    // dataPort.postMessage({ refresh: true });
+    dataPort.postMessage({ init: true });
   },
   render: function (createElement) {
     return createElement("div", {}, [
@@ -844,10 +865,12 @@ new Vue({
         props: {
           "sort-feature": this.sortFeature,
           "sort-order": this.sortOrder,
+          "content-loading": this.contentLoading
         },
         on: {
           changesortfeature: this.changeSortFeature,
-          changesortorder: this.changeSortOrder
+          changesortorder: this.changeSortOrder,
+          refreshcontent: this.refreshContent
         }
       }),
       createElement("content-list", {

@@ -29,6 +29,10 @@ body {
   padding-left: 3px;
 }
 
+.flex-fill {
+  flex-grow: 1;
+}
+
 #sort-by {
   color: #757575;
   background-color: #eee;
